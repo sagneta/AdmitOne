@@ -410,13 +410,23 @@ INSERT INTO relationshipidentitytypeentity (identifier, descriptor, identitytype
 INSERT INTO relationshipidentitytypeentity (identifier, descriptor, identitytype_id, owner_id) VALUES ((SELECT nextval('hibernate_sequence')), 'group', '2751b72d-9e33-43c3-aa38-a584006e67bc', '5081efb2-24c5-445f-9a49-d59072b8353a');
 
 
-CREATE TABLE bjond_service
-    (
-        id VARCHAR NOT NULL,
-        group_id VARCHAR NOT NULL,
-        endpoint VARCHAR NOT NULL,
 
-        PRIMARY KEY (id)
-    );
+-- Create a regular user.
+-- user: Joe Blow 
+-- pass: systemsystem1
+INSERT INTO attributedtypeentity (id) VALUES ('071d8f1c-0d3e-4fae-a1e4-45f1a706c7b6');
+INSERT INTO identitytypeentity (createddate, enabled, expirationdate, typename, id, partition_id) VALUES ('2015-09-10 17:02:20', true, null, 'org.picketlink.idm.model.basic.User', '071d8f1c-0d3e-4fae-a1e4-45f1a706c7b6', '9ab34f53-ff19-4ab4-baa4-79c4957af03d');
 
-CREATE INDEX bjond_service_idx  ON bjond_service (group_id);
+-- Do NOT REMOVE the newlines which are required. I know they look funny but leave them there.
+INSERT INTO passwordcredentialtypeentity (id, effectivedate, expirydate, typename, passwordencodedhash, passwordsalt, owner_id) VALUES ((SELECT nextval('hibernate_sequence')), '2015-09-10 17:02:20', null, 'org.picketlink.idm.credential.storage.EncodedPasswordStorage', 'tWt0J2wDSop+BMKMZBiSmgVXU6Vt2QhHs3l+cWv5w7F299GAMI3s/HaDsUaj2WOvekCJU5Kc14Ln
+stIeTHP2BQ==', '5959875240769452180', '071d8f1c-0d3e-4fae-a1e4-45f1a706c7b6');
+
+
+INSERT INTO accounttypeentity (id, email, firstname, lastname, loginname) VALUES ('071d8f1c-0d3e-4fae-a1e4-45f1a706c7b6', 'joeblow@gmail.com', 'Joe', 'Blow', 'Joe Blow');
+
+-- Add to the Bjönd Parent Group.
+INSERT INTO attributedtypeentity (id) VALUES ('cc94e8a8-a4e3-4ed1-9a24-796a82eb6840');
+INSERT INTO relationshiptypeentity (typename, id) VALUES ('org.picketlink.idm.model.basic.GroupMembership', 'cc94e8a8-a4e3-4ed1-9a24-796a82eb6840');
+INSERT INTO relationshipidentitytypeentity (identifier, descriptor, identitytype_id, owner_id) VALUES ((SELECT nextval('hibernate_sequence')), 'member', '071d8f1c-0d3e-4fae-a1e4-45f1a706c7b6', 'cc94e8a8-a4e3-4ed1-9a24-796a82eb6840');
+INSERT INTO relationshipidentitytypeentity (identifier, descriptor, identitytype_id, owner_id) VALUES ((SELECT nextval('hibernate_sequence')), 'group', '2751b72d-9e33-43c3-aa38-a584006e67bc', 'cc94e8a8-a4e3-4ed1-9a24-796a82eb6840');
+
