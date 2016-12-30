@@ -36,17 +36,16 @@ import lombok.NoArgsConstructor;
 @Table(name="orders")
 @NamedQueries({
         @NamedQuery(name="Order.findAll", query="SELECT o FROM Order o"),
-            @NamedQuery(name="Order.findCountOfAllAttendingPerUser",    query="SELECT COUNT(o.id) FROM Order o WHERE userID = :userid AND orderType IN ('Purchase', 'Exchange') ORDER BY toShowID"),
-            @NamedQuery(name="Order.findAllAttendingPerUser",    query="SELECT o FROM Order o WHERE userID = :userid AND orderType IN ('Purchase', 'Exchange') ORDER BY toShowID"),
-            @NamedQuery(name="Order.findAllTicketsOwnedPerUser", query="SELECT SUM(tickets) FROM Order o WHERE userID = :userid AND orderType IN ('Purchase', 'Exchange')"),
+            @NamedQuery(name="Order.findCountOfAllAttendingPerUser",    query="SELECT COUNT(o.id) FROM Order o WHERE userID = :userid AND orderType IN ('Purchase', 'Exchange') AND canceled = FALSE ORDER BY toShowID"),
+            @NamedQuery(name="Order.findAllAttendingPerUser",    query="SELECT o FROM Order o WHERE userID = :userid AND orderType IN ('Purchase', 'Exchange') AND canceled = FALSE ORDER BY toShowID"),
+            @NamedQuery(name="Order.findAllTicketsOwnedPerUser", query="SELECT SUM(tickets) FROM Order o WHERE userID = :userid AND canceled = FALSE AND orderType IN ('Purchase', 'Exchange')"),
             @NamedQuery(name="Order.findOrderHistoryPerUser",    query="SELECT o FROM Order o WHERE userID = :userid ORDER BY toShowID"),
-            @NamedQuery(name="Order.findOrderRangedPerUser",     query="SELECT o FROM Order o WHERE userID = :userid AND orderType IN ('Purchase', 'Exchange') AND toShowID BETWEEN :min AND :max"),
-            @NamedQuery(name="Order.findSpecificPurchaseOrExchange", query="SELECT o FROM Order o WHERE userID = :userid AND orderType IN ('Purchase', 'Exchange') AND toShowID = :toshowid AND tickets = :tickets"),                                    
+            @NamedQuery(name="Order.findOrderRangedPerUser",     query="SELECT o FROM Order o WHERE userID = :userid AND canceled = FALSE AND orderType IN ('Purchase', 'Exchange') AND toShowID BETWEEN :min AND :max"),
+            @NamedQuery(name="Order.findSpecificPurchaseOrExchange", query="SELECT o FROM Order o WHERE userID = :userid AND orderType IN ('Purchase', 'Exchange') AND canceled = FALSE AND toShowID = :toshowid AND tickets = :tickets"),                                    
             })
 public class Order {
     public enum ORDER_TYPE {
         Purchase,
-        Cancellation,
         Exchange
     };
 
@@ -69,6 +68,10 @@ public class Order {
     @Column(name="order_type")
     private ORDER_TYPE orderType = ORDER_TYPE.Purchase;
 
+	@Column(name="canceled")
+	private Boolean canceled;
+
+    
 
     /////////////////////////////////////////////////////////////////////////
     //                     Private Static search methods.                  //
