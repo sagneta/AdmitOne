@@ -44,7 +44,7 @@ import lombok.NoArgsConstructor;
             @NamedQuery(name="Order.findOrderRangedPerUser",     query="SELECT o FROM Order o WHERE userID = :userid AND canceled = FALSE AND orderType IN ('Purchase', 'Exchange') AND toShowID BETWEEN :min AND :max"),
             @NamedQuery(name="Order.findSpecificPurchaseOrExchange", query="SELECT o FROM Order o WHERE userID = :userid AND orderType IN ('Purchase', 'Exchange') AND canceled = FALSE AND toShowID = :toshowid AND tickets = :tickets"),
             @NamedQuery(name="Order.findAllTicketsOwnedPerUserAndShow", query="SELECT o FROM Order o WHERE userID = :userid AND orderType IN ('Purchase', 'Exchange') AND canceled = FALSE AND toShowID = :toshowid"),
-            @NamedQuery(name="Order.findCountOfAllTicketsOwnedPerUserAndShow", query="SELECT COUNT(o.id) FROM Order o WHERE userID = :userid AND orderType IN ('Purchase', 'Exchange') AND canceled = FALSE AND toShowID = :toshowid"),
+            @NamedQuery(name="Order.findCountOfAllTicketsOwnedPerUserAndShow", query="SELECT SUM(o.tickets) FROM Order o WHERE userID = :userid AND orderType IN ('Purchase', 'Exchange') AND canceled = FALSE AND toShowID = :toshowid"),
             
             })
 public class Order {
@@ -184,13 +184,14 @@ public class Order {
         return query.getResultList();
     }
 
-    public static Long findCountOfAllTicketsOwnedPerUserAndShow(final EntityManager EM, final String userID, final int toShowID) {
+    public static long findCountOfAllTicketsOwnedPerUserAndShow(final EntityManager EM, final String userID, final int toShowID) {
         try {        
             final TypedQuery<Long> query = EM.createNamedQuery("Order.findCountOfAllTicketsOwnedPerUserAndShow", Long.class);
             query.setParameter("userid", userID);
             query.setParameter("toshowid", toShowID);
             
-            return query.getSingleResult();
+            final Long result = query.getSingleResult();
+            return (result == null) ? 0L : result;
         }
         catch(final NoResultException e){
             return 0L;

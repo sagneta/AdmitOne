@@ -234,10 +234,10 @@ public class TestAdmitOne {
                 .containsOnly(order);
 
             count = Order.findCountOfAllTicketsOwnedPerUserAndShow(getEntityManager(),  userID, 1);
-            assertThat(count).isEqualTo(1);
+            assertThat(count).isEqualTo(101);
             
             count = Order.findCountOfAllTicketsOwnedPerUserAndShow(getEntityManager(),  userID, 2);
-            assertThat(count).isEqualTo(1);
+            assertThat(count).isEqualTo(50);
             
             count = Order.findCountOfAllTicketsOwnedPerUserAndShow(getEntityManager(),  userID, 3);
             assertThat(count).isEqualTo(0);
@@ -403,6 +403,28 @@ public class TestAdmitOne {
                 
 
         } finally {
+            if(orders != null) {
+                transaction.begin();
+                orders.forEach(o -> getEntityManager().remove(washEntity(o)));
+                transaction.commit();
+            }
+        }
+    }
+    
+    @Test(expected=javax.ejb.EJBException.class)
+    public void testCancel_Negative() throws Exception {
+        Response response = userService.purchase(10, 1);
+        Assert.assertEquals("Should be OK if method invocation was successful.", Status.OK.getStatusCode(), response.getStatus());
+        
+        final Order order1 = (Order)response.getEntity();
+        assertThat(order1).isNotNull();
+
+        try {
+            response = userService.cancel(22, 1);
+            Assert.assertEquals("Should be OK if method invocation was successful.", Status.OK.getStatusCode(), response.getStatus());
+
+        } finally {
+            final List<Order> orders = Order.findAll(getEntityManager(), 1000, 0);
             if(orders != null) {
                 transaction.begin();
                 orders.forEach(o -> getEntityManager().remove(washEntity(o)));

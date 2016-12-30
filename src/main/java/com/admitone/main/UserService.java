@@ -168,7 +168,7 @@ public class UserService {
         
         // First check if the user has a sufficient number of tickets to cancel.
         final long ticketsOwned = Order.findCountOfAllTicketsOwnedPerUserAndShow(getEntityManager(), user.getId(), showID);
-        Preconditions.checkState(ticketsOwned < tickets,  "User owns insufficient number of tickets: " + ticketsOwned);
+        Preconditions.checkState(ticketsOwned >= tickets,  "User owns insufficient number of tickets: " + ticketsOwned);
 
 
         // Second go through each purchase of that showID and set the purchase to canceled.
