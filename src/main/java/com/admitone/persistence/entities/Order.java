@@ -12,6 +12,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.NoResultException;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
 
 import lombok.AllArgsConstructor;
@@ -71,6 +72,8 @@ public class Order {
 	@Column(name="canceled")
 	private Boolean canceled;
 
+    @Transient
+    private String username;
     
 
     /////////////////////////////////////////////////////////////////////////
