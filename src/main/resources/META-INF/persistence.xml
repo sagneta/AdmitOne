@@ -7,6 +7,7 @@
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
     <jta-data-source>java:jboss/datasources/AdmitOneDS</jta-data-source>
 
+    <!-- IdentityManager -->
     <class>org.picketlink.idm.jpa.model.sample.simple.AttributedTypeEntity</class>
 	<class>org.picketlink.idm.jpa.model.sample.simple.AccountTypeEntity</class>
     <class>org.picketlink.idm.jpa.model.sample.simple.RoleTypeEntity</class>
@@ -21,7 +22,10 @@
     <class>org.picketlink.idm.jpa.model.sample.simple.OTPCredentialTypeEntity</class>
     <class>org.picketlink.idm.jpa.model.sample.simple.AttributeTypeEntity</class>
 
-      <shared-cache-mode>ALL</shared-cache-mode>
+    <!-- Application specific entities -->
+    <class>com.admitone.persistence.entities.Order</class>
+    
+    <shared-cache-mode>ALL</shared-cache-mode>
     <properties>
         <!-- Switching to 'validate' to have it check the schema; we will use flyway to manage our schema. -->
         <property name="hibernate.hbm2ddl.auto" value="validate"/>
