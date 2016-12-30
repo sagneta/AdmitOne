@@ -37,7 +37,7 @@ import lombok.NoArgsConstructor;
 @Table(name="orders")
 @NamedQueries({
         @NamedQuery(name="Order.findAll", query="SELECT o FROM Order o"),
-            @NamedQuery(name="Order.findCountOfAllAttendingPerUser",    query="SELECT COUNT(o.id) FROM Order o WHERE userID = :userid AND orderType IN ('Purchase', 'Exchange') AND canceled = FALSE ORDER BY toShowID"),
+            @NamedQuery(name="Order.findCountOfAllAttendingPerUser",    query="SELECT COUNT(o.id) FROM Order o WHERE o.userID = :userid AND o.orderType IN ('Purchase', 'Exchange') AND o.canceled = FALSE"),
             @NamedQuery(name="Order.findAllAttendingPerUser",    query="SELECT o FROM Order o WHERE userID = :userid AND orderType IN ('Purchase', 'Exchange') AND canceled = FALSE ORDER BY toShowID"),
             @NamedQuery(name="Order.findAllTicketsOwnedPerUser", query="SELECT SUM(tickets) FROM Order o WHERE userID = :userid AND canceled = FALSE AND orderType IN ('Purchase', 'Exchange')"),
             @NamedQuery(name="Order.findOrderHistoryPerUser",    query="SELECT o FROM Order o WHERE userID = :userid ORDER BY toShowID"),

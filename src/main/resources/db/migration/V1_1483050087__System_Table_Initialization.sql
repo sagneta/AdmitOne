@@ -4,8 +4,8 @@ CREATE TABLE orders
     id VARCHAR NOT NULL,
     fk_user VARCHAR NOT NULL,
     tickets INTEGER NOT NULL,
-    showid_to INTEGER , 
-    showid_from INTEGER NOT NULL, -- used only for exchanges
+    showid_to INTEGER NOT NULL, 
+    showid_from INTEGER, -- used only for exchanges
     order_type VARCHAR NOT NULL,
     canceled BOOLEAN DEFAULT false NOT NULL,
 

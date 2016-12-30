@@ -24,7 +24,7 @@ import lombok.val;
     underlying JSON engine implementation </p>
 
  *
- * <a href="mailto:Stephen.Agneta@bjondinc.com">Steve 'Cräsh' Agneta</a>
+ * <a href="mailto:sagneta@gmail.com">Steve 'Cräsh' Agneta</a>
  *
  */
 

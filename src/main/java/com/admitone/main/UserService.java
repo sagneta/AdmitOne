@@ -45,7 +45,7 @@ import lombok.extern.slf4j.Slf4j;
 /** <p> For User Role REST endpoints </p>
 
  *
- * <a href="mailto:Stephen.Agneta@bjondinc.com">Steve 'Crash' Agneta</a>
+ * <a href="mailto:sagneta@gmail.com">Steve 'Crash' Agneta</a>
  *
  */
 
@@ -77,8 +77,8 @@ public class UserService {
         log.info("Purchase: username({}) tickets({}) showID({})", user.getLoginName(), tickets, showID);
 
         // Guards
-        Preconditions.checkState(tickets <= 0, "tickets must be > 0");
-        Preconditions.checkState(showID <= 0,  "showID must be > 0");
+        Preconditions.checkState(tickets >= 0, "tickets must be > 0");
+        Preconditions.checkState(showID >= 0,  "showID must be > 0");
 
         // Essentially you can add infinite amount of purchases
         // on any show ID (event).
@@ -94,7 +94,7 @@ public class UserService {
         getEntityManager().persist(order);
 
         log.info("Completed");
-        return Response.ok("Ok").build();    
+        return Response.ok(order).build();    
     }
 
     @POST
@@ -114,9 +114,9 @@ public class UserService {
         log.info("Exchange: username({}) tickets({}) fromShowID({}) toShowID({})", user.getLoginName(), tickets, fromShowID, toShowID);
 
         // Guards
-        Preconditions.checkState(tickets <= 0, "tickets must be > 0");
-        Preconditions.checkState(fromShowID <= 0,  "fromShowID must be > 0");
-        Preconditions.checkState(toShowID <= 0,  "toShowID must be > 0");
+        Preconditions.checkState(tickets >= 0, "tickets must be > 0");
+        Preconditions.checkState(fromShowID >= 0,  "fromShowID must be > 0");
+        Preconditions.checkState(toShowID >= 0,  "toShowID must be > 0");
         
         // First check if the user has a sufficient number of tickets to exchange.
         final long ticketsOwned = Order.findCountOfAllTicketsOwnedPerUserAndShow(getEntityManager(), user.getId(), toShowID);
@@ -141,7 +141,7 @@ public class UserService {
         getEntityManager().persist(order);
         
         log.info("Completed");        
-        return Response.ok("Ok").build();    
+        return Response.ok(order).build();    
     }
 
 
@@ -161,8 +161,8 @@ public class UserService {
         log.info("Cancel: username({}) tickets({}) showID({})", user.getLoginName(), tickets, showID);
 
         // Guards
-        Preconditions.checkState(tickets <= 0, "tickets must be > 0");
-        Preconditions.checkState(showID <= 0,  "showID must be > 0");
+        Preconditions.checkState(tickets >= 0, "tickets must be > 0");
+        Preconditions.checkState(showID >= 0,  "showID must be > 0");
 
         
         // First check if the user has a sufficient number of tickets to cancel.
@@ -200,7 +200,7 @@ public class UserService {
         list.forEach(o -> o.setUsername(user.getLoginName()));
         
         log.info("Completed");        
-        return Response.ok("Ok").build();    
+        return Response.ok(list).build();    
     }
 
 

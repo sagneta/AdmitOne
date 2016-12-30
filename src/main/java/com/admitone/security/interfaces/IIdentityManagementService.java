@@ -18,7 +18,7 @@ import org.picketlink.idm.model.basic.User;
 /** <p> Interface for the IdentityManagementService Session Bean </p>
 
  *
- * <a href="mailto:Stephen.Agneta@bjondinc.com">Steve 'Crash' Agneta</a>
+ * <a href="mailto:sagneta@gmail.com">Steve 'Crash' Agneta</a>
  *
  */
 

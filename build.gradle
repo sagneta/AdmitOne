@@ -145,7 +145,6 @@ dependencies {
 buildscript{
     repositories {
      mavenCentral()
-     //maven {url 'http://nexus.bjondhealth.com/nexus/content/groups/public'}
     }
     dependencies{
         classpath 'org.flywaydb:flyway-gradle-plugin:3.2.1'
@@ -180,7 +179,7 @@ war {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-// The html report can be found under /bjond-health/clients/server-core/build/reports/findbugs       //
+// The html report can be found under AdmitOne/build/reports/tests/test/index.html                   //
 // If you want an XML report that can be fed into the findbugs eclipse plugin set xml.enabled = true //
 // and html.enabled = false. You can't have both true at the same time which is kinda stupid but     //
 // there ya go.                                                                                      //

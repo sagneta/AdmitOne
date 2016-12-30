@@ -33,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
     </p>
 
  *
- * <a href="mailto:Stephen.Agneta@bjondinc.com">Steve 'Crash' Agneta</a>
+ * <a href="mailto:sagneta@gmail.com">Steve 'Crash' Agneta</a>
  *
  */
 
