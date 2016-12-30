@@ -13,6 +13,11 @@ import lombok.extern.slf4j.Slf4j;
 
 
 
+/**
+ *  For Administration Role REST interface.
+ * 
+ * @author 
+ */
 @Path("/administration")
 @Stateful
 @Slf4j

@@ -12,6 +12,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
 import javax.transaction.UserTransaction;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -20,10 +22,13 @@ import org.jboss.shrinkwrap.api.importer.ZipImporter;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.admitone.main.AdministrationService;
+import com.admitone.main.AuthenticationService;
+import com.admitone.security.interfaces.IIdentityManagementService;
 
 import lombok.Getter;
 import lombok.val;
@@ -40,7 +45,7 @@ import lombok.extern.slf4j.Slf4j;
 public class TestAdmitOne {
     public static final String ROOT_WAR_DEPLOYMENT_LOCATION = "./build/libs/admitone.war";
     
-    @PersistenceContext(unitName = "admitone", type = PersistenceContextType.TRANSACTION)
+    @PersistenceContext(unitName = IIdentityManagementService.PERSISTENCE_UNIT, type = PersistenceContextType.TRANSACTION)
     @Getter private EntityManager entityManager;
 
     @Resource 
@@ -48,6 +53,9 @@ public class TestAdmitOne {
     
     @EJB
     private AdministrationService adminService;
+    
+    @EJB
+    private AuthenticationService authenticationService;
     
     
     /////////////////////////////////////////////////////////////////////////
@@ -60,10 +68,18 @@ public class TestAdmitOne {
         log.info("Admit One War: " + a.toString(true));
         return a;
     }
-    
-    @After
-    public void cleanup() throws Exception {
+
+    @Before
+    public void setUp() throws Exception {
+        Response response = authenticationService.login("admin", "admin");
+        Assert.assertEquals("Should be OK if method invocation was successful. ", Status.OK.getStatusCode() , response.getStatus());
     }
+
+    @After
+    public void tearDown() throws Exception {
+        authenticationService.logout();
+    }
+
     
     @Test
     public void sanityCheck() throws Exception {

@@ -32,16 +32,11 @@ import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
-import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.codec.binary.Base64;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.picketlink.config.SecurityConfigurationBuilder;
 import org.picketlink.idm.IdentityManager;
 import org.picketlink.idm.PartitionManager;
 import org.picketlink.idm.RelationshipManager;
@@ -61,7 +56,6 @@ import com.admitone.security.interfaces.IIdentityManagementService;
 // Functional Java
 import fj.F;
 
-import lombok.Getter;
 import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 
@@ -80,8 +74,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class IdentityManagementService implements IIdentityManagementService
 {
-    @PersistenceContext(unitName = "admitone", type=PersistenceContextType.TRANSACTION)
-    @Getter private EntityManager entityManager;
+    // @PersistenceContext(unitName = "admitone", type=PersistenceContextType.TRANSACTION)
+    // @Getter private EntityManager entityManager;
 
 	@Inject 
     private PartitionManager partitionManager;

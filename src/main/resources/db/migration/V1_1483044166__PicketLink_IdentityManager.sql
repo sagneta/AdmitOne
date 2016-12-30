@@ -365,9 +365,9 @@ INSERT INTO attributedtypeentity (id) SELECT 'abad60b3-1438-4806-9f7e-51ca26886f
 INSERT INTO attributedtypeentity (id) SELECT '2751b72d-9e33-43c3-aa38-a584006e67bc' WHERE '2751b72d-9e33-43c3-aa38-a584006e67bc' NOT IN (SELECT id FROM attributedtypeentity);
 INSERT INTO attributedtypeentity (id) SELECT 'a083c3fd-c829-40b1-be15-80f91bd7238b' WHERE 'a083c3fd-c829-40b1-be15-80f91bd7238b' NOT IN (SELECT id FROM attributedtypeentity);
 
-INSERT INTO partitiontypeentity (configurationname, name, typename, id) SELECT 'identitystore', 'default', 'org.picketlink.idm.model.basic.Realm', '90bffc41-c298-4a23-8976-06b08218993e' WHERE '90bffc41-c298-4a23-8976-06b08218993e' NOT IN (SELECT id FROM partitiontypeentity);
-INSERT INTO partitiontypeentity (configurationname, name, typename, id) SELECT 'identitystore', 'admitOneRealm', 'org.picketlink.idm.model.basic.Realm', '9ab34f53-ff19-4ab4-baa4-79c4957af03d' WHERE '9ab34f53-ff19-4ab4-baa4-79c4957af03d' NOT IN (SELECT id FROM partitiontypeentity);
-INSERT INTO partitiontypeentity (configurationname, name, typename, id) SELECT 'identitystore', 'admitOneTier', 'org.picketlink.idm.model.basic.Tier', 'abad60b3-1438-4806-9f7e-51ca26886f9a' WHERE 'abad60b3-1438-4806-9f7e-51ca26886f9a' NOT IN (SELECT id FROM partitiontypeentity);
+INSERT INTO partitiontypeentity (configurationname, name, typename, id) SELECT 'admitone', 'default', 'org.picketlink.idm.model.basic.Realm', '90bffc41-c298-4a23-8976-06b08218993e' WHERE '90bffc41-c298-4a23-8976-06b08218993e' NOT IN (SELECT id FROM partitiontypeentity);
+INSERT INTO partitiontypeentity (configurationname, name, typename, id) SELECT 'admitone', 'admitOneRealm', 'org.picketlink.idm.model.basic.Realm', '9ab34f53-ff19-4ab4-baa4-79c4957af03d' WHERE '9ab34f53-ff19-4ab4-baa4-79c4957af03d' NOT IN (SELECT id FROM partitiontypeentity);
+INSERT INTO partitiontypeentity (configurationname, name, typename, id) SELECT 'admitone', 'admitOneTier', 'org.picketlink.idm.model.basic.Tier', 'abad60b3-1438-4806-9f7e-51ca26886f9a' WHERE 'abad60b3-1438-4806-9f7e-51ca26886f9a' NOT IN (SELECT id FROM partitiontypeentity);
 
 
 -- Create the admitOneParentGroup and assign to the bjöndRealm
@@ -424,9 +424,36 @@ stIeTHP2BQ==', '5959875240769452180', '071d8f1c-0d3e-4fae-a1e4-45f1a706c7b6');
 
 INSERT INTO accounttypeentity (id, email, firstname, lastname, loginname) VALUES ('071d8f1c-0d3e-4fae-a1e4-45f1a706c7b6', 'joeblow@gmail.com', 'Joe', 'Blow', 'Joe Blow');
 
--- Add to the Bjönd Parent Group.
+-- Add to a group.
 INSERT INTO attributedtypeentity (id) VALUES ('cc94e8a8-a4e3-4ed1-9a24-796a82eb6840');
 INSERT INTO relationshiptypeentity (typename, id) VALUES ('org.picketlink.idm.model.basic.GroupMembership', 'cc94e8a8-a4e3-4ed1-9a24-796a82eb6840');
 INSERT INTO relationshipidentitytypeentity (identifier, descriptor, identitytype_id, owner_id) VALUES ((SELECT nextval('hibernate_sequence')), 'member', '071d8f1c-0d3e-4fae-a1e4-45f1a706c7b6', 'cc94e8a8-a4e3-4ed1-9a24-796a82eb6840');
 INSERT INTO relationshipidentitytypeentity (identifier, descriptor, identitytype_id, owner_id) VALUES ((SELECT nextval('hibernate_sequence')), 'group', '2751b72d-9e33-43c3-aa38-a584006e67bc', 'cc94e8a8-a4e3-4ed1-9a24-796a82eb6840');
+
+
+
+-- Add System Administrator and User Roles to the System Administrator
+
+-- System Admin Role
+INSERT INTO attributedtypeentity (id) VALUES ('ad112467-0446-4b4a-ab26-e0880e59db11');
+
+INSERT INTO relationshiptypeentity (typename, id) VALUES ('org.picketlink.idm.model.basic.Grant', 'ad112467-0446-4b4a-ab26-e0880e59db11');
+INSERT INTO relationshipidentitytypeentity (identifier, descriptor, identitytype_id, owner_id) VALUES ((SELECT nextval('hibernate_sequence')), 'role', 'ec6dc8a6-9fb3-4270-871b-ecce3299d1a9', 'ad112467-0446-4b4a-ab26-e0880e59db11');
+INSERT INTO relationshipidentitytypeentity (identifier, descriptor, identitytype_id, owner_id) VALUES ((SELECT nextval('hibernate_sequence')), 'assignee', 'f93fcf75-8cd0-4797-ae78-2ec416bf9807', 'ad112467-0446-4b4a-ab26-e0880e59db11');
+
+-- User Role
+INSERT INTO attributedtypeentity (id) VALUES ('34d7f14e-3f6d-4049-81e9-88c93731f9b5');
+
+INSERT INTO relationshiptypeentity (typename, id) VALUES ('org.picketlink.idm.model.basic.Grant', '34d7f14e-3f6d-4049-81e9-88c93731f9b5');
+INSERT INTO relationshipidentitytypeentity (identifier, descriptor, identitytype_id, owner_id) VALUES ((SELECT nextval('hibernate_sequence')), 'role', 'c6eb3154-ffc8-44a0-a521-202abaca1408', '34d7f14e-3f6d-4049-81e9-88c93731f9b5');
+INSERT INTO relationshipidentitytypeentity (identifier, descriptor, identitytype_id, owner_id) VALUES ((SELECT nextval('hibernate_sequence')), 'assignee', 'f93fcf75-8cd0-4797-ae78-2ec416bf9807', '34d7f14e-3f6d-4049-81e9-88c93731f9b5');
+
+
+-- User Role to Joe Blow
+-- User Role
+INSERT INTO attributedtypeentity (id) VALUES ('2477b11e-b71f-4372-8a97-0da2ddd6415d');
+
+INSERT INTO relationshiptypeentity (typename, id) VALUES ('org.picketlink.idm.model.basic.Grant', '2477b11e-b71f-4372-8a97-0da2ddd6415d');
+INSERT INTO relationshipidentitytypeentity (identifier, descriptor, identitytype_id, owner_id) VALUES ((SELECT nextval('hibernate_sequence')), 'role', 'c6eb3154-ffc8-44a0-a521-202abaca1408', '2477b11e-b71f-4372-8a97-0da2ddd6415d');
+INSERT INTO relationshipidentitytypeentity (identifier, descriptor, identitytype_id, owner_id) VALUES ((SELECT nextval('hibernate_sequence')), 'assignee', '071d8f1c-0d3e-4fae-a1e4-45f1a706c7b6', '2477b11e-b71f-4372-8a97-0da2ddd6415d');
 

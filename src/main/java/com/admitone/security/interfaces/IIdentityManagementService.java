@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 
 import org.picketlink.idm.IdentityManager;
 import org.picketlink.idm.model.Account;
+import org.picketlink.idm.model.basic.Realm;
 import org.picketlink.idm.model.basic.Role;
 import org.picketlink.idm.model.basic.User;
 
@@ -23,6 +24,19 @@ import org.picketlink.idm.model.basic.User;
 
 @Local
 public interface IIdentityManagementService {
+    public static final String USER_ROLE                      = "User";
+    public static final String SYSTEM_ADMINISTRATION_ROLE     = "SystemAdministrator";
+    public static final String PERSISTENCE_UNIT = "admitone";
+    
+    /////////////////////////////////////////////////////////////////////////
+    //                 Realms (tenants) and Tiers (personas)               //
+    /////////////////////////////////////////////////////////////////////////
+    public @Nullable IdentityManager forRealm(@NotNull(message="realm must not be null.") Realm realm);
+    public @Nullable Realm getRealm(@NotNull(message="realmName must not be null.") String realmName);
+    public @Nullable Realm getRealmByID(@NotNull(message="id must not be null.") String ID);
+
+    
+
     /////////////////////////////////////////////////////////////////////////
     //                                 Users                               //
     /////////////////////////////////////////////////////////////////////////
