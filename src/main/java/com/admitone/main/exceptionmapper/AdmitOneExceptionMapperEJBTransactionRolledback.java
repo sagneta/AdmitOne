@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Provider
 @Slf4j
-public class BjondExceptionMapperEJBTransactionRolledback implements ExceptionMapper<javax.ejb.EJBTransactionRolledbackException> {
+public class AdmitOneExceptionMapperEJBTransactionRolledback implements ExceptionMapper<javax.ejb.EJBTransactionRolledbackException> {
     public Response toResponse(javax.ejb.EJBTransactionRolledbackException e) {
         log.error(ExceptionUtils.getMessage(e), e);
 

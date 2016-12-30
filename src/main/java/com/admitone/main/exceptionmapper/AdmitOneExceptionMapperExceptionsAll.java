@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Provider
 @Slf4j
-public class BjondExceptionMapperExceptionsAll implements ExceptionMapper<java.lang.Exception> {
+public class AdmitOneExceptionMapperExceptionsAll implements ExceptionMapper<java.lang.Exception> {
     public Response toResponse(java.lang.Exception e) {
         log.error(ExceptionUtils.getMessage(e), e);
         return NetworkUtils.errorResponse(Response.Status.INTERNAL_SERVER_ERROR, ExceptionUtils.getMessage(e), ErrorCodes.ADMITONE_HTTP_ERROR_CODES.UNEXPECTED_ERROR);

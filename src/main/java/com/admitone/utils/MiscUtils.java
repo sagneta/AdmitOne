@@ -33,6 +33,14 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 final public class MiscUtils {
+    public static final String DEFAULT_LIMIT  = "1000"; // arbitrary.
+    public static final String DEFAULT_OFFSET = "0"; // Begining.
+    public static final int iDEFAULT_LIMIT    = 1000; // arbitrary.
+    public static final int iDEFAULT_OFFSET   = 0; // Begining.
+    
+
+    
+
     private static TimeBasedGenerator uuidGenerator;
     static {
         // need to pass Ethernet address; can either use real one (shown here)

@@ -43,10 +43,6 @@ import lombok.extern.slf4j.Slf4j;
 @TransactionAttribute(REQUIRED)
 @Slf4j
 public class AuthenticationService {
-
-    // @PersistenceContext(unitName = "admitone", type=PersistenceContextType.TRANSACTION)
-    // @Getter private EntityManager entityManager;
-
     @Inject
     private RealmSelector realmSelector;
     
@@ -101,7 +97,7 @@ public class AuthenticationService {
      * @return a <code>Response</code> value
      * @exception Exception if an error occurs
      */
-    public Response login(String tenant, String username, String password) throws Exception {
+    public Response login(final String tenant, final String username, final String password) throws Exception {
 
         log.info("login invoked.");
         // Check if we already have a realmsetup.

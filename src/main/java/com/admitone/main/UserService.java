@@ -1,9 +1,21 @@
 package com.admitone.main;
 
 import static com.admitone.security.interfaces.IIdentityManagementService.USER_ROLE;
+import static com.admitone.utils.MiscUtils.DEFAULT_LIMIT;
+import static com.admitone.utils.MiscUtils.DEFAULT_OFFSET;
+import static com.admitone.utils.MiscUtils.iDEFAULT_OFFSET;
+
+import static javax.ejb.TransactionAttributeType.REQUIRED;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ejb.Stateful;
+import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
@@ -18,10 +30,17 @@ import javax.ws.rs.core.Response;
 import org.picketlink.Identity;
 import org.picketlink.idm.model.basic.User;
 
+import com.admitone.persistence.entities.Order;
+import com.admitone.persistence.entities.Order.ORDER_TYPE;
 import com.admitone.security.cdi.RolesAllowed;
 import com.admitone.security.cdi.UserLoggedIn;
+import com.admitone.security.interfaces.IIdentityManagementService;
+import com.admitone.utils.MiscUtils;
+import com.google.common.base.Preconditions;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j; 
+
 
 /** <p> For User Role REST endpoints </p>
 
@@ -35,9 +54,9 @@ import lombok.extern.slf4j.Slf4j;
 @Stateful
 @Slf4j
 public class UserService {
-    private static final String DEFAULT_LIMIT  = "1000"; // arbitrary.
-    private static final String DEFAULT_OFFSET = "0"; // Begining.
 
+    @PersistenceContext(unitName = IIdentityManagementService.PERSISTENCE_UNIT, type=PersistenceContextType.TRANSACTION)
+    @Getter private EntityManager entityManager;
 
     @Inject
     private Identity identity;
@@ -48,6 +67,7 @@ public class UserService {
     @UserLoggedIn
     @RolesAllowed({USER_ROLE})
     @Produces(MediaType.APPLICATION_JSON)
+    @TransactionAttribute(REQUIRED)
     public Response purchase(
                              @NotNull(message="tickets must not be null.") @FormParam("tickets") Integer tickets,
                              @NotNull(message="showid must not be null.")  @FormParam("showid") Integer showID) throws Exception {
@@ -55,9 +75,23 @@ public class UserService {
         final User user = getCurrentUser(); 
 
         log.info("Purchase: username({}) tickets({}) showID({})", user.getLoginName(), tickets, showID);
+
+        // Guards
+        Preconditions.checkState(tickets <= 0, "tickets must be > 0");
+        Preconditions.checkState(showID <= 0,  "showID must be > 0");
+
         // Essentially you can add infinite amount of purchases
         // on any show ID (event).
-
+        final Order order = Order.builder()
+            .id(MiscUtils.generateUUID())
+            .userID(user.getId())
+            .tickets(tickets)
+            .toShowID(showID)
+            .orderType(ORDER_TYPE.Purchase)
+            .canceled(false)
+            .build();
+                     
+        getEntityManager().persist(order);
 
         log.info("Completed");
         return Response.ok("Ok").build();    
@@ -68,6 +102,7 @@ public class UserService {
     @UserLoggedIn
     @RolesAllowed({USER_ROLE})
     @Produces(MediaType.APPLICATION_JSON)
+    @TransactionAttribute(REQUIRED)
     public Response exchange(
                              @NotNull(message="tickets must not be null.")    @FormParam("tickets") Integer tickets,
                              @NotNull(message="fromShowid must not be null.") @FormParam("fromShowid") Integer fromShowID,
@@ -77,11 +112,34 @@ public class UserService {
         final User user = getCurrentUser(); 
         
         log.info("Exchange: username({}) tickets({}) fromShowID({}) toShowID({})", user.getLoginName(), tickets, fromShowID, toShowID);
+
+        // Guards
+        Preconditions.checkState(tickets <= 0, "tickets must be > 0");
+        Preconditions.checkState(fromShowID <= 0,  "fromShowID must be > 0");
+        Preconditions.checkState(toShowID <= 0,  "toShowID must be > 0");
         
         // First check if the user has a sufficient number of tickets to exchange.
-        // Second go through each purchase of that showID and change it to an exchange until all tickets are exchanged.
-        // Third if the last purchase -> exchange record has left over tickets then INSERT a purchase for the remainder fromShowID tickets.
+        final long ticketsOwned = Order.findCountOfAllTicketsOwnedPerUserAndShow(getEntityManager(), user.getId(), toShowID);
+        Preconditions.checkState(ticketsOwned < tickets,  "User owns insufficient number of tickets: " + ticketsOwned);
 
+        // Second go through each purchase/exchange of that showID and cancel it or reduce the outstanding tickets.
+        final List<Order> ownedList  = Order.findAllTicketsOwnedPerUserAndShow(getEntityManager(), user.getId(), toShowID, iDEFAULT_OFFSET, iDEFAULT_OFFSET);
+        final List<Order> updateList = extractTickets(tickets, ownedList);
+
+        // Third add the exchange.
+        final Order order = Order.builder()
+            .id(MiscUtils.generateUUID())
+            .userID(user.getId())
+            .tickets(tickets)
+            .toShowID(toShowID)
+            .fromShowID(fromShowID)
+            .orderType(ORDER_TYPE.Exchange)
+            .canceled(false)
+            .build();
+
+        updateList.forEach(o -> getEntityManager().merge(o));
+        getEntityManager().persist(order);
+        
         log.info("Completed");        
         return Response.ok("Ok").build();    
     }
@@ -92,6 +150,7 @@ public class UserService {
     @UserLoggedIn
     @RolesAllowed({USER_ROLE})
     @Produces(MediaType.APPLICATION_JSON)
+    @TransactionAttribute(REQUIRED)
     public Response cancel(
                            @NotNull(message="tickets must not be null.")  @FormParam("tickets") Integer tickets,
                            @NotNull(message="showid must not be null.")   @FormParam("showid") Integer showID
@@ -100,11 +159,24 @@ public class UserService {
         final User user = getCurrentUser(); 
         
         log.info("Cancel: username({}) tickets({}) showID({})", user.getLoginName(), tickets, showID);
+
+        // Guards
+        Preconditions.checkState(tickets <= 0, "tickets must be > 0");
+        Preconditions.checkState(showID <= 0,  "showID must be > 0");
+
         
         // First check if the user has a sufficient number of tickets to cancel.
-        // Second go through each purchase of that showID and set the purchase to canceled.
-        // Third if the last canceled purchase record has left over tickets then INSERT a purchase for the remainder showID tickets.
+        final long ticketsOwned = Order.findCountOfAllTicketsOwnedPerUserAndShow(getEntityManager(), user.getId(), showID);
+        Preconditions.checkState(ticketsOwned < tickets,  "User owns insufficient number of tickets: " + ticketsOwned);
 
+
+        // Second go through each purchase of that showID and set the purchase to canceled.
+        final List<Order> ownedList = Order.findAllTicketsOwnedPerUserAndShow(getEntityManager(), user.getId(), showID, iDEFAULT_OFFSET, iDEFAULT_OFFSET);
+        final List<Order> updateList = extractTickets(tickets, ownedList);
+        
+
+        updateList.forEach(o -> getEntityManager().merge(o));
+        
         log.info("Completed");        
         return Response.ok("Ok").build();    
     }
@@ -115,7 +187,7 @@ public class UserService {
     @RolesAllowed({USER_ROLE})
     @Produces(MediaType.APPLICATION_JSON)
     public Response history(
-                            @QueryParam("limit")  @DefaultValue(DEFAULT_LIMIT) final int iLimit, 
+                            @QueryParam("limit")  @DefaultValue(DEFAULT_LIMIT)  final int iLimit, 
                             @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) final int iOffset              
                            ) throws Exception {
 
@@ -123,7 +195,10 @@ public class UserService {
         
         log.info("History: username({}) limit({}) offset({})", user.getLoginName(), iLimit, iOffset);
 
+        final List<Order> list = Order.findOrderHistoryPerUser(getEntityManager(), user.getId(), iLimit, iOffset);
 
+        list.forEach(o -> o.setUsername(user.getLoginName()));
+        
         log.info("Completed");        
         return Response.ok("Ok").build();    
     }
@@ -137,4 +212,32 @@ public class UserService {
     private User getCurrentUser() {
         return (User)identity.getAccount();
     }
+
+	/**
+	 * @param tickets
+	 * @param ownedList
+	 * @param updateList
+	 */
+	private List<Order> extractTickets(final Integer tickets, final List<Order> ownedList) {
+        final List<Order> updateList = new ArrayList<>();
+            
+		int ticketCount = tickets;
+        for(final Order order : ownedList) {
+            if(order.getTickets() <= ticketCount) {
+                order.setCanceled(true);
+                updateList.add(order);
+                ticketCount -= order.getTickets();
+            } else { 
+                order.setTickets(order.getTickets() - ticketCount);
+                updateList.add(order);
+                ticketCount = 0;
+            }
+
+            if(0 == ticketCount){break;}
+        }
+
+        return updateList;
+	}
+
+    
 }

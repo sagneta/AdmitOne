@@ -42,7 +42,10 @@ import lombok.NoArgsConstructor;
             @NamedQuery(name="Order.findAllTicketsOwnedPerUser", query="SELECT SUM(tickets) FROM Order o WHERE userID = :userid AND canceled = FALSE AND orderType IN ('Purchase', 'Exchange')"),
             @NamedQuery(name="Order.findOrderHistoryPerUser",    query="SELECT o FROM Order o WHERE userID = :userid ORDER BY toShowID"),
             @NamedQuery(name="Order.findOrderRangedPerUser",     query="SELECT o FROM Order o WHERE userID = :userid AND canceled = FALSE AND orderType IN ('Purchase', 'Exchange') AND toShowID BETWEEN :min AND :max"),
-            @NamedQuery(name="Order.findSpecificPurchaseOrExchange", query="SELECT o FROM Order o WHERE userID = :userid AND orderType IN ('Purchase', 'Exchange') AND canceled = FALSE AND toShowID = :toshowid AND tickets = :tickets"),                                    
+            @NamedQuery(name="Order.findSpecificPurchaseOrExchange", query="SELECT o FROM Order o WHERE userID = :userid AND orderType IN ('Purchase', 'Exchange') AND canceled = FALSE AND toShowID = :toshowid AND tickets = :tickets"),
+            @NamedQuery(name="Order.findAllTicketsOwnedPerUserAndShow", query="SELECT o FROM Order o WHERE userID = :userid AND orderType IN ('Purchase', 'Exchange') AND canceled = FALSE AND toShowID = :toshowid"),
+            @NamedQuery(name="Order.findCountOfAllTicketsOwnedPerUserAndShow", query="SELECT COUNT(o.id) FROM Order o WHERE userID = :userid AND orderType IN ('Purchase', 'Exchange') AND canceled = FALSE AND toShowID = :toshowid"),
+            
             })
 public class Order {
     public enum ORDER_TYPE {
@@ -63,7 +66,7 @@ public class Order {
 	private Integer toShowID;
     
 	@Column(name="showid_from")
-	private Integer toFromID;
+	private Integer fromShowID;
     
     @Enumerated(EnumType.STRING)
     @Column(name="order_type")
@@ -88,7 +91,7 @@ public class Order {
         return query.getResultList();
     }
 
-    public Long findCountOfAllAttendingPerUser(final EntityManager EM, final String userID) {
+    public static Long findCountOfAllAttendingPerUser(final EntityManager EM, final String userID) {
         try {        
             final TypedQuery<Long> query = EM.createNamedQuery("Order.findCountOfAllAttendingPerUser", Long.class);
             query.setParameter("userid", userID);
@@ -110,7 +113,7 @@ public class Order {
         return query.getResultList();
     }
 
-    public Long findAllTicketsOwnedPerUser(final EntityManager EM, final String userID) {
+    public static Long findAllTicketsOwnedPerUser(final EntityManager EM, final String userID) {
         try {        
             final TypedQuery<Long> query = EM.createNamedQuery("Order.findAllTicketsOwnedPerUser", Long.class);
             query.setParameter("userid", userID);
@@ -165,5 +168,34 @@ public class Order {
 
         return query.getResultList();
     }
+
+
+    public static List<Order> findAllTicketsOwnedPerUserAndShow(final EntityManager EM,
+                                                                final String userID,
+                                                                final int toShowID,
+                                                                final int limit, final int start) {
+        final TypedQuery<Order> query = EM.createNamedQuery("Order.findAllTicketsOwnedPerUserAndShow", Order.class);
+
+        query.setParameter("userid", userID);
+        query.setParameter("toshowid", toShowID);
+        query.setFirstResult(start);
+        query.setMaxResults(limit);
+
+        return query.getResultList();
+    }
+
+    public static Long findCountOfAllTicketsOwnedPerUserAndShow(final EntityManager EM, final String userID, final int toShowID) {
+        try {        
+            final TypedQuery<Long> query = EM.createNamedQuery("Order.findCountOfAllTicketsOwnedPerUserAndShow", Long.class);
+            query.setParameter("userid", userID);
+            query.setParameter("toshowid", toShowID);
+            
+            return query.getSingleResult();
+        }
+        catch(final NoResultException e){
+            return 0L;
+        }
+    }
+
     
 }
