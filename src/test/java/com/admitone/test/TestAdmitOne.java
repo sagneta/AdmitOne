@@ -432,6 +432,70 @@ public class TestAdmitOne {
             }
         }
     }
+
+
+    @Test
+    public void testExchange_1() throws Exception {
+        Response response = userService.purchase(10, 1);
+        Assert.assertEquals("Should be OK if method invocation was successful.", Status.OK.getStatusCode(), response.getStatus());
+        
+        final Order order1 = (Order)response.getEntity();
+        assertThat(order1).isNotNull();
+
+        response = userService.purchase(10, 1);
+        Assert.assertEquals("Should be OK if method invocation was successful.", Status.OK.getStatusCode(), response.getStatus());
+        
+        final Order order2 = (Order)response.getEntity();
+        assertThat(order2).isNotNull();
+
+        response = userService.purchase(10, 1);
+        Assert.assertEquals("Should be OK if method invocation was successful.", Status.OK.getStatusCode(), response.getStatus());
+        
+        final Order order3 = (Order)response.getEntity();
+        assertThat(order3).isNotNull();
+        
+        List<Order> orders = null;
+        Order exchangedOrder = null;
+        try {
+            response = userService.exchange(22, 1, 3);
+            Assert.assertEquals("Should be OK if method invocation was successful.", Status.OK.getStatusCode(), response.getStatus());
+
+            exchangedOrder = (Order)response.getEntity();
+            
+            orders = Order.findAll(getEntityManager(), 1000, 0);
+
+            assertThat(orders)
+                .isNotNull()
+                .hasSize(4)
+                .filteredOn(o -> o.getCanceled())
+                .hasSize(2);
+
+            assertThat(orders)
+                .isNotNull()
+                .hasSize(4)
+                .filteredOn(o -> !o.getCanceled() && o.getTickets() == 8)
+                .hasSize(1);
+
+
+            exchangedOrder = getEntityManager().find(Order.class, exchangedOrder.getId());
+
+            assertThat(exchangedOrder).isNotNull();
+            assertThat(exchangedOrder.getOrderType()).isEqualTo(Order.ORDER_TYPE.Exchange);
+            assertThat(exchangedOrder.getTickets()).isEqualTo(22);
+
+        } finally {
+            orders = Order.findAll(getEntityManager(), 1000, 0);
+            if(orders != null) {
+                transaction.begin();
+                orders.forEach(o -> getEntityManager().remove(washEntity(o)));
+
+                if(exchangedOrder != null) {
+                    getEntityManager().remove(washEntity(exchangedOrder));
+                }
+                transaction.commit();
+            }
+        }
+    }
     
     /////////////////////////////////////////////////////////////////////////
     //                            private methods                          //

@@ -120,11 +120,11 @@ public class UserService {
         Preconditions.checkState(toShowID >= 0,  "toShowID must be > 0");
         
         // First check if the user has a sufficient number of tickets to exchange.
-        final long ticketsOwned = Order.findCountOfAllTicketsOwnedPerUserAndShow(getEntityManager(), user.getId(), toShowID);
-        Preconditions.checkState(ticketsOwned < tickets,  "User owns insufficient number of tickets: " + ticketsOwned);
-
+        final long ticketsOwned = Order.findCountOfAllTicketsOwnedPerUserAndShow(getEntityManager(), user.getId(), fromShowID);
+        Preconditions.checkState(ticketsOwned >= tickets,  "User owns insufficient number of tickets: " + ticketsOwned);
+        
         // Second go through each purchase/exchange of that showID and cancel it or reduce the outstanding tickets.
-        final List<Order> ownedList  = Order.findAllTicketsOwnedPerUserAndShow(getEntityManager(), user.getId(), toShowID, iDEFAULT_OFFSET, iDEFAULT_OFFSET);
+        final List<Order> ownedList  = Order.findAllTicketsOwnedPerUserAndShow(getEntityManager(), user.getId(), fromShowID, iDEFAULT_OFFSET, iDEFAULT_OFFSET);
         final List<Order> updateList = extractTickets(tickets, ownedList);
 
         // Third add the exchange.
