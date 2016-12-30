@@ -85,6 +85,7 @@ public class UserService {
         final Order order = Order.builder()
             .id(MiscUtils.generateUUID())
             .userID(user.getId())
+            .username(user.getLoginName())
             .tickets(tickets)
             .toShowID(showID)
             .orderType(ORDER_TYPE.Purchase)

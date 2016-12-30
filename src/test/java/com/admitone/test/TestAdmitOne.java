@@ -254,18 +254,30 @@ public class TestAdmitOne {
 
 
     @Test
-    public void testPurchase() throws Exception {
+    public void testPurchaseAndHistory() throws Exception {
         Response response = userService.purchase(79, 1);
-        Assert.assertEquals("Should be OK if method invocation was successful. ", Status.OK.getStatusCode() , response.getStatus());
+        Assert.assertEquals("Should be OK if method invocation was successful.", Status.OK.getStatusCode(), response.getStatus());
         
         final Order order = (Order)response.getEntity();
         assertThat(order).isNotNull();
 
         try {
             final Order orderRead = getEntityManager().find(Order.class, order.getId());
+            orderRead.setUsername("admin");
+            
             assertThat(orderRead).isNotNull().isEqualTo(order);
             assertThat(orderRead.getTickets()).isEqualTo(79);
             assertThat(orderRead.getToShowID()).isEqualTo(1);
+
+            response = userService.history(1000,0);
+            Assert.assertEquals("Should be OK if method invocation was successful.", Status.OK.getStatusCode(), response.getStatus());
+
+            @SuppressWarnings("unchecked")
+            final List<Order> orders = (List<Order>)response.getEntity();
+            assertThat(orders)
+                .isNotNull()
+                .hasSize(1)
+                .containsOnly(orderRead);
             
 
         } finally {
