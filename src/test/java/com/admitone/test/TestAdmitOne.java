@@ -285,10 +285,132 @@ public class TestAdmitOne {
             getEntityManager().remove(washEntity(order));
             transaction.commit();
         }
+    }
 
+    // Not going to test all the guards.
+    @Test(expected=javax.ejb.EJBException.class)
+    public void basicNegativeGuardTesting_1() throws Exception {
+        userService.purchase(-1,1);
+    }
+
+    @Test(expected=javax.ejb.EJBException.class)
+    public void basicNegativeGuardTesting_2() throws Exception {
+        userService.purchase(101,-11);
+    }
+
+
+    @Test
+    public void testCancel_1() throws Exception {
+        Response response = userService.purchase(79, 1);
+        Assert.assertEquals("Should be OK if method invocation was successful.", Status.OK.getStatusCode(), response.getStatus());
+        
+        final Order order = (Order)response.getEntity();
+        assertThat(order).isNotNull();
+
+        
+        Order orderRead = null;
+        try {
+            response = userService.cancel(79, 1);
+            Assert.assertEquals("Should be OK if method invocation was successful.", Status.OK.getStatusCode(), response.getStatus());
+
+            orderRead = getEntityManager().find(Order.class, order.getId());
+            
+            assertThat(orderRead).isNotNull();
+            assertThat(orderRead.getTickets()).isEqualTo(79);
+            assertThat(orderRead.getCanceled()).isTrue();
+
+            
+
+        } finally {
+            if(orderRead != null) {
+                transaction.begin();
+                getEntityManager().remove(washEntity(orderRead));
+                transaction.commit();
+            }
+        }
+    }
+
+
+    @Test
+    public void testCancel_2() throws Exception {
+        Response response = userService.purchase(79, 1);
+        Assert.assertEquals("Should be OK if method invocation was successful.", Status.OK.getStatusCode(), response.getStatus());
+        
+        final Order order = (Order)response.getEntity();
+        assertThat(order).isNotNull();
+
+        
+        Order orderRead = null;
+        try {
+            response = userService.cancel(20, 1);
+            Assert.assertEquals("Should be OK if method invocation was successful.", Status.OK.getStatusCode(), response.getStatus());
+
+            orderRead = getEntityManager().find(Order.class, order.getId());
+            
+            assertThat(orderRead).isNotNull();
+            assertThat(orderRead.getTickets()).isEqualTo(59);
+            assertThat(orderRead.getCanceled()).isFalse();
+
+            
+
+        } finally {
+            if(orderRead != null) {
+                transaction.begin();
+                getEntityManager().remove(washEntity(orderRead));
+                transaction.commit();
+            }
+        }
     }
     
+    @Test
+    public void testCancel_3() throws Exception {
+        Response response = userService.purchase(10, 1);
+        Assert.assertEquals("Should be OK if method invocation was successful.", Status.OK.getStatusCode(), response.getStatus());
+        
+        final Order order1 = (Order)response.getEntity();
+        assertThat(order1).isNotNull();
 
+        response = userService.purchase(10, 1);
+        Assert.assertEquals("Should be OK if method invocation was successful.", Status.OK.getStatusCode(), response.getStatus());
+        
+        final Order order2 = (Order)response.getEntity();
+        assertThat(order2).isNotNull();
+
+        response = userService.purchase(10, 1);
+        Assert.assertEquals("Should be OK if method invocation was successful.", Status.OK.getStatusCode(), response.getStatus());
+        
+        final Order order3 = (Order)response.getEntity();
+        assertThat(order3).isNotNull();
+        
+        List<Order> orders = null;
+        try {
+            response = userService.cancel(22, 1);
+            Assert.assertEquals("Should be OK if method invocation was successful.", Status.OK.getStatusCode(), response.getStatus());
+
+            orders = Order.findAll(getEntityManager(), 1000, 0);
+
+            assertThat(orders)
+                .isNotNull()
+                .hasSize(3)
+                .filteredOn(o -> o.getCanceled())
+                .hasSize(2);
+
+            assertThat(orders)
+                .isNotNull()
+                .hasSize(3)
+                .filteredOn(o -> !o.getCanceled() && o.getTickets() == 8)
+                .hasSize(1);
+                
+
+        } finally {
+            if(orders != null) {
+                transaction.begin();
+                orders.forEach(o -> getEntityManager().remove(washEntity(o)));
+                transaction.commit();
+            }
+        }
+    }
+    
     /////////////////////////////////////////////////////////////////////////
     //                            private methods                          //
     /////////////////////////////////////////////////////////////////////////
