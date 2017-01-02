@@ -3,3 +3,11 @@ html {
   font: 16px Arial;
 }
 
+table, th, td {
+   border: 1px solid black;
+}
+table {
+    border-spacing: 0.5rem;
+    border-collapse: collapse;    
+}
+

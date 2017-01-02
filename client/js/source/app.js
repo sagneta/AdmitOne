@@ -15,6 +15,10 @@ ReactDOM.render(
         <LoginForm/>
         <LogoutButton/>
         <SearchForm/>
+
+        <br/>
+        <br/>
+        <br/>
   </h1>,
   document.getElementById('app')
 );

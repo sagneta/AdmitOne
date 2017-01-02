@@ -16,7 +16,7 @@ class LoginForm extends React.Component {
         this.handleChangePassword = this.handleChangePassword.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
 
-        
+        this.setState = this.setState.bind(this);
     }
     
     handleChangeUsername(event) {
