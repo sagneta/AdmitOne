@@ -36,7 +36,8 @@ class LogoutButton extends React.Component {
             //data: mydata,
             success: function(response, textStatus, xhr) {
                 console.log("success");
-                window.location = "http://localhost:8080";
+                // restart the application via redirect.
+                window.location = "http://localhost:8080"; 
             }.bind(this),
             error: function(xhr, textStatus, errorThrown) {
                 console.log("error");
