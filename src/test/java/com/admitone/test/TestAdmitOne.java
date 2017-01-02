@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.util.List;
+import java.util.Random;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -93,15 +94,14 @@ public class TestAdmitOne {
     }
 
     
-    @Test
+    //@Test
     public void sanityCheck() throws Exception {
         Assert.assertTrue("I ran ok!", true);
         assertThat(entityManager).isNotNull();
     }
 
-
     
-    @Test
+    //@Test
     public void basic_CRUD() throws Exception {
         final Order order = Order.builder()
             .id(MiscUtils.generateUUID())
@@ -140,7 +140,7 @@ public class TestAdmitOne {
         assertThat(order3).isNull();
     }
     
-    @Test
+    //@Test
     public void basicTestOfQueries() throws Exception {
 
         final String userID = identity.getAccount().getId();
@@ -253,7 +253,7 @@ public class TestAdmitOne {
 
 
 
-    @Test
+    //@Test
     public void testPurchaseAndHistory() throws Exception {
         Response response = userService.purchase(79, 1);
         Assert.assertEquals("Should be OK if method invocation was successful.", Status.OK.getStatusCode(), response.getStatus());
@@ -288,18 +288,18 @@ public class TestAdmitOne {
     }
 
     // Not going to test all the guards.
-    @Test(expected=javax.ejb.EJBException.class)
+    //@Test(expected=javax.ejb.EJBException.class)
     public void basicNegativeGuardTesting_1() throws Exception {
         userService.purchase(-1,1);
     }
 
-    @Test(expected=javax.ejb.EJBException.class)
+    //@Test(expected=javax.ejb.EJBException.class)
     public void basicNegativeGuardTesting_2() throws Exception {
         userService.purchase(101,-11);
     }
 
 
-    @Test
+    //@Test
     public void testCancel_1() throws Exception {
         Response response = userService.purchase(79, 1);
         Assert.assertEquals("Should be OK if method invocation was successful.", Status.OK.getStatusCode(), response.getStatus());
@@ -331,7 +331,7 @@ public class TestAdmitOne {
     }
 
 
-    @Test
+    //@Test
     public void testCancel_2() throws Exception {
         Response response = userService.purchase(79, 1);
         Assert.assertEquals("Should be OK if method invocation was successful.", Status.OK.getStatusCode(), response.getStatus());
@@ -362,7 +362,7 @@ public class TestAdmitOne {
         }
     }
     
-    @Test
+    //@Test
     public void testCancel_3() throws Exception {
         Response response = userService.purchase(10, 1);
         Assert.assertEquals("Should be OK if method invocation was successful.", Status.OK.getStatusCode(), response.getStatus());
@@ -411,7 +411,7 @@ public class TestAdmitOne {
         }
     }
     
-    @Test(expected=javax.ejb.EJBException.class)
+    //@Test(expected=javax.ejb.EJBException.class)
     public void testCancel_Negative() throws Exception {
         Response response = userService.purchase(10, 1);
         Assert.assertEquals("Should be OK if method invocation was successful.", Status.OK.getStatusCode(), response.getStatus());
@@ -434,7 +434,7 @@ public class TestAdmitOne {
     }
 
 
-    @Test
+    //@Test
     public void testExchange_1() throws Exception {
         Response response = userService.purchase(10, 1);
         Assert.assertEquals("Should be OK if method invocation was successful.", Status.OK.getStatusCode(), response.getStatus());
@@ -496,6 +496,42 @@ public class TestAdmitOne {
             }
         }
     }
+
+
+    // Convenient method of constructing lots of test data.
+    // Simply uncomment the test annotation and comment all others and run the system integration suite.
+
+    @Test
+    public void constuctTestDataSet() throws Exception {
+        // Logged in as Admin at this moment. Create some admin purchases.
+        final Random r = new Random();
+
+        final int[] ticketsAdmin = r.ints(5, 0, 100).toArray();
+        final int[] eventsAdmin = r.ints(5, 0, 10).toArray(); 
+
+        final int[] ticketsJoe = r.ints(5, 0, 100).toArray();
+        final int[] eventsJoe = r.ints(5, 0, 10).toArray(); 
+
+        int count = 0;
+        for(final int ticket : ticketsAdmin) {
+
+            Response response = userService.purchase(ticket, eventsAdmin[count++]);
+            Assert.assertEquals("Should be OK if method invocation was successful.", Status.OK.getStatusCode(), response.getStatus());
+        }
+
+
+        authenticationService.logout();
+        authenticationService.login("Joe Blow", "systemsystem1");
+        
+        count = 0;
+        for(final int ticket : ticketsJoe) {
+            Response response = userService.purchase(ticket, eventsJoe[count++]);
+            Assert.assertEquals("Should be OK if method invocation was successful.", Status.OK.getStatusCode(), response.getStatus());
+        }
+
+        
+    }
+
     
     /////////////////////////////////////////////////////////////////////////
     //                            private methods                          //

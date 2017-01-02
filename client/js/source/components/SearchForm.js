@@ -29,7 +29,7 @@ class SearchForm extends React.Component {
 
     handleSubmit(event) {
         console.log('A startshowid was submitted: ' + this.state.startshowid);
-        console.log('A endshowid was submitted: ' + this.state.endshowid);
+        console.log('A endshowid   was submitted: ' + this.state.endshowid);
         event.preventDefault();
 
         var mydata = $("form#search-form").serialize();
@@ -38,8 +38,8 @@ class SearchForm extends React.Component {
             type: "POST",
             url: "/admitone/services/administration/search/form",
             data: mydata,
-            success: function(response, textStatus, xhr) {
-                console.log("success");
+            success: function(results) {
+                console.log("success: " + JSON.stringify(results));
             },
             error: function(xhr, textStatus, errorThrown) {
                 console.log("error");
@@ -60,9 +60,8 @@ class SearchForm extends React.Component {
                 endshowid:<input name="endshowid" value={this.state.endshowid} onChange={this.handleChangeEndShowID} />
                 </label>
 
-                <p>
-                <center><input type="submit" value="Search" /></center>
-                </p>
+                <br></br>
+                <input type="submit" value="Search" />
                 </form>
         );
     }
