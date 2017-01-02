@@ -1,0 +1,124 @@
+import org.gradle.api.tasks.Exec
+import org.apache.tools.ant.taskdefs.condition.Os
+import org.apache.tools.ant.filters.ReplaceTokens
+
+
+buildscript {
+    repositories {
+         mavenCentral()
+    }
+    dependencies {
+     classpath 'com.eriwen:gradle-js-plugin:1.12.0'
+    }
+}
+
+plugins {
+  id "com.eriwen.gradle.css" version "2.14.0"
+}
+
+defaultTasks 'assemble'
+
+apply plugin: 'war'
+apply plugin: 'js'
+apply plugin: 'css'
+
+
+webAppDirName = './'
+
+
+war {
+  dependsOn 'combineCss'
+  dependsOn 'babel'
+  dependsOn 'browserify'
+  webXml = file('../WEB-INF/web.xml')
+  archiveName = 'ROOT.war'
+  outputs.files file('../build/libs/ROOT.war')
+  inputs.files fileTree('./')
+
+  doLast {
+    copy {
+      from 'build/libs'
+      into '../build/libs'
+      include '*.war'
+    }
+  }
+
+}
+
+
+// Declare your sources
+css.source {
+    dev {
+        css {
+            srcDir "./css"
+            include "**/*.css"
+            exclude "*.min.css"
+        }
+    }
+}
+
+combineCss {
+    source = css.source.dev.css.files
+    dest = "./bundle.css"
+}
+
+
+
+// Tasks ---------------------------------------------------------------------------
+
+class PortableExecTask extends Exec {
+  def fname = ""
+  def argString = ""
+  public PortableExecTask(String windowsExec, String unixExec) {
+    super()
+    fname = Os.isFamily(Os.FAMILY_WINDOWS) ? windowsExec : unixExec
+    this.setExecutable(fname)
+
+  }
+  public void setArgString(String argstring) {
+    this.args = "$argstring".trim().split(" ") as List
+  }
+}
+
+task babel(type: BabelTask) {
+  group = "Build"
+  description = "Runs babel to transpile the reactjs application."
+  argString = " --presets react,es2015 js/source/ -d js/build "
+}
+
+
+class BabelTask extends PortableExecTask {
+  public BabelTask() {
+    super("babel", "babel")
+  }
+}
+
+
+
+task browserify(type: BrowserifyTask) {
+  group = "Build"
+  description = "Runs browserify which packages the application."
+  argString = " js/build/app.js -o bundle.js "
+}
+
+
+class BrowserifyTask extends PortableExecTask {
+  public BrowserifyTask() {
+    super("browserify", "browserify")
+  }
+}
+
+
+
+
+task cleanWar(type: Delete) {
+  delete '../build/libs/ROOT.war'
+  delete './bundle.css'
+  delete './bundle.js'
+ delete './js/build'
+}
+
+
+// Dependency chain
+clean.dependsOn(cleanWar)
+
