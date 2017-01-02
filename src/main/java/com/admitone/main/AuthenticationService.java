@@ -7,9 +7,13 @@ import javax.ejb.Stateful;
 import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -56,8 +60,21 @@ public class AuthenticationService {
     private IIdentityManagementService identityService;
     
 
+    @POST
+    @Path("/loginform")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Response loginForm(@NotNull(message="username must not be null.") @DefaultValue("defuser")    @FormParam("username") String username,
+                              @NotNull(message="password must not be null.") @DefaultValue("defpass")   @FormParam("password") String password) throws Exception {
+
+        log.info("LOGINFORM: username({}) password({})", username, password);
+        return login("admitOneRealm", username, password);
+    }
+
+    
     @GET
-    @Path("/login") 
+    @Path("/login")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response login(@NotNull(message="username must not be null.") @QueryParam("username") String username,
                           @NotNull(message="password must not be null.") @QueryParam("password") String password) throws Exception {
 

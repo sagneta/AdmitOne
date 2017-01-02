@@ -5,7 +5,7 @@ import static com.admitone.utils.MiscUtils.DEFAULT_LIMIT;
 import static com.admitone.utils.MiscUtils.DEFAULT_OFFSET;
 import static com.admitone.utils.MiscUtils.iDEFAULT_OFFSET;
 
-import static javax.ejb.TransactionAttributeType.REQUIRED;
+import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +67,7 @@ public class UserService {
     @UserLoggedIn
     @RolesAllowed({USER_ROLE})
     @Produces(MediaType.APPLICATION_JSON)
-    @TransactionAttribute(REQUIRED)
+    @TransactionAttribute(REQUIRES_NEW)
     public Response purchase(
                              @NotNull(message="tickets must not be null.") @FormParam("tickets") Integer tickets,
                              @NotNull(message="showid must not be null.")  @FormParam("showid") Integer showID) throws Exception {
@@ -103,7 +103,7 @@ public class UserService {
     @UserLoggedIn
     @RolesAllowed({USER_ROLE})
     @Produces(MediaType.APPLICATION_JSON)
-    @TransactionAttribute(REQUIRED)
+    @TransactionAttribute(REQUIRES_NEW)
     public Response exchange(
                              @NotNull(message="tickets must not be null.")    @FormParam("tickets") Integer tickets,
                              @NotNull(message="fromShowid must not be null.") @FormParam("fromShowid") Integer fromShowID,
@@ -151,7 +151,7 @@ public class UserService {
     @UserLoggedIn
     @RolesAllowed({USER_ROLE})
     @Produces(MediaType.APPLICATION_JSON)
-    @TransactionAttribute(REQUIRED)
+    @TransactionAttribute(REQUIRES_NEW)
     public Response cancel(
                            @NotNull(message="tickets must not be null.")  @FormParam("tickets") Integer tickets,
                            @NotNull(message="showid must not be null.")   @FormParam("showid") Integer showID
