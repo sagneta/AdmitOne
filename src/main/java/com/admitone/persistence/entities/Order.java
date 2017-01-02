@@ -3,14 +3,20 @@ package com.admitone.persistence.entities;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.ColumnResult;
+import javax.persistence.ConstructorResult;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.NoResultException;
+import javax.persistence.SqlResultSetMapping;
+import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
@@ -42,12 +48,35 @@ import lombok.NoArgsConstructor;
             @NamedQuery(name="Order.findAllTicketsOwnedPerUser", query="SELECT SUM(tickets) FROM Order o WHERE userID = :userid AND canceled = FALSE AND orderType IN ('Purchase', 'Exchange')"),
             @NamedQuery(name="Order.findOrderHistoryPerUser",    query="SELECT o FROM Order o WHERE userID = :userid ORDER BY toShowID"),
             @NamedQuery(name="Order.findOrderRangedPerUser",     query="SELECT o FROM Order o WHERE userID = :userid AND canceled = FALSE AND orderType IN ('Purchase', 'Exchange') AND toShowID BETWEEN :min AND :max"),
-            @NamedQuery(name="Order.findOrderRanged",     query="SELECT o FROM Order o WHERE canceled = FALSE AND orderType IN ('Purchase', 'Exchange') AND toShowID BETWEEN :min AND :max"),            
+
+            @NamedQuery(name="Order.findOrderRanged", query="SELECT o FROM Order o WHERE canceled = FALSE AND orderType IN ('Purchase', 'Exchange') AND toShowID BETWEEN :min AND :max"),
+
+
+            
             @NamedQuery(name="Order.findSpecificPurchaseOrExchange", query="SELECT o FROM Order o WHERE userID = :userid AND orderType IN ('Purchase', 'Exchange') AND canceled = FALSE AND toShowID = :toshowid AND tickets = :tickets"),
             @NamedQuery(name="Order.findAllTicketsOwnedPerUserAndShow", query="SELECT o FROM Order o WHERE userID = :userid AND orderType IN ('Purchase', 'Exchange') AND canceled = FALSE AND toShowID = :toshowid"),
             @NamedQuery(name="Order.findCountOfAllTicketsOwnedPerUserAndShow", query="SELECT SUM(o.tickets) FROM Order o WHERE userID = :userid AND orderType IN ('Purchase', 'Exchange') AND canceled = FALSE AND toShowID = :toshowid"),
             
             })
+@NamedNativeQueries({
+        @NamedNativeQuery(
+                          name="Order.findOrderRangedNative",
+                          query="SELECT o.id, o.showid_to AS toShowID, a.loginname AS username, o.tickets FROM orders o, accounttypeentity a WHERE canceled = FALSE AND order_type IN ('Purchase', 'Exchange') AND showid_to BETWEEN ? AND ? AND o.fk_user = a.id ",
+                          resultSetMapping="Order.stub"
+                          ),
+    })
+    @SqlResultSetMappings({
+            @SqlResultSetMapping(name="Order.stub",
+                                 classes={
+                                     @ConstructorResult(targetClass=Order.class, columns={
+                                             @ColumnResult(name="id", type=String.class),
+                                             @ColumnResult(name="toShowID", type=Integer.class),
+                                             @ColumnResult(name="username", type=String.class),
+                                             @ColumnResult(name="tickets", type=Integer.class)                                             
+                                         })
+                                 }
+                                 ),
+                })
 public class Order {
     public enum ORDER_TYPE {
         Purchase,
@@ -79,7 +108,13 @@ public class Order {
     @Transient
     private String username;
     
-
+    public Order(final String id, final Integer toShowID, final String username, final Integer tickets) {
+        setId(id);
+        setToShowID(toShowID);
+        setUsername(username);
+        setTickets(tickets);
+    }
+    
     /////////////////////////////////////////////////////////////////////////
     //                     Private Static search methods.                  //
     /////////////////////////////////////////////////////////////////////////
@@ -212,5 +247,24 @@ public class Order {
         }
     }
 
+    public static List<Order> findOrderRangedNative(final EntityManager EM,
+                                                    final int minShowID, final int maxShowID,
+                                                    final int iLimit, final int iOffset) {
+        try {
+            final TypedQuery<Order> query = EM.createNamedQuery("Order.findOrderRangedNative", Order.class);
+
+            query.setParameter(1, minShowID);
+            query.setParameter(2, maxShowID);
+
+            query.setMaxResults(iLimit);
+            query.setFirstResult(iOffset);
+
+            return query.getResultList();
+
+        } catch(final NoResultException e){
+            return null;
+        }
+    }
     
 }
+;

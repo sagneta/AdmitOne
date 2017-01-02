@@ -14,7 +14,7 @@ class SearchForm extends React.Component {
             endshowid:   'Event ID End',
 
             headers: ['Event ID', 'Customer', 'Tickets'],
-            data: [['9', 'Joe Blow', '101']],
+            data: [],
             displayExcel: false
         };
 
@@ -34,12 +34,12 @@ class SearchForm extends React.Component {
     }
 
     handleSubmit(event) {
-        console.log('A startshowid was submitted: ' + this.state.startshowid);
-        console.log('A endshowid   was submitted: ' + this.state.endshowid);
+        //        console.log('A startshowid was submitted: ' + this.state.startshowid);
+        //        console.log('A endshowid   was submitted: ' + this.state.endshowid);
         event.preventDefault();
 
         var mydata = $("form#search-form").serialize();
-        console.log("mydata "+ mydata);
+        //console.log("mydata "+ mydata);
         $.ajax({
             type: "POST",
             url: "/admitone/services/administration/search/form",

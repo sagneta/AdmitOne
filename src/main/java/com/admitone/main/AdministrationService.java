@@ -47,9 +47,6 @@ public class AdministrationService {
     @EJB
     private IIdentityManagementService identityService;
 
-    // @Inject
-    // private IdentityManager identityManager;
-    
     @PostConstruct
     protected void startService()  {
         log.info("AdministrationService service started successfully.");
@@ -80,7 +77,17 @@ public class AdministrationService {
                                @NotNull(message="startShowID must not be null") @FormParam("startshowid") final Integer startShowID,
                                @NotNull(message="endShowID must not be null") @FormParam("endshowid") final Integer endShowID
                                ) throws Exception {
-        return search(startShowID,  endShowID);
+
+        log.info("Search: startShowID({}) endShowID({})", startShowID, endShowID);
+        
+        final List<Order> list = Order.findOrderRangedNative(getEntityManager(),
+                                                             Integer.min(startShowID, endShowID),
+                                                             Integer.max(startShowID, endShowID),
+                                                             iDEFAULT_LIMIT, iDEFAULT_OFFSET);
+                                                              
+
+        log.info("Completed");        
+        return Response.ok(list).build();    
     }
     
     @GET
