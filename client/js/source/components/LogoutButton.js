@@ -8,9 +8,6 @@ class LogoutButton extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            data: ''
-        };
         this.myHeaders = new Headers();
         this.myInit = { method: 'POST',
                         headers: this.myHeaders,
@@ -33,7 +30,6 @@ class LogoutButton extends React.Component {
         $.ajax({
             type: "POST",
             url: "/admitone/services/authenticate/logout",
-            //data: mydata,
             success: function(response, textStatus, xhr) {
                 console.log("success");
                 // restart the application via redirect.

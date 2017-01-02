@@ -155,7 +155,7 @@ var Excel = React.createClass({
             }, this)
           }</tr>
         </thead>
-        <tbody onDoubleClick={this._showEditor}>
+        <tbody >
           {this._renderSearch()}
           {this.state.data.map(function (row, rowidx) {
             return (
