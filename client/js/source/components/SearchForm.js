@@ -13,7 +13,7 @@ class SearchForm extends React.Component {
             startshowid: 'Event ID Start',
             endshowid:   'Event ID End',
 
-            headers: ['Event ID', 'Customer', 'Tickets'],
+            headers: ['Event ID', 'Customer', '# Tickets'],
             data: [],
             displayExcel: false
         };
@@ -79,7 +79,10 @@ class SearchForm extends React.Component {
             return (
                     <div>
                     <ReactButton onClick={this.onClicked}>Search Again</ReactButton>
+                    <br/>
+                    <div>
                     <Excel headers={this.state.headers} initialData={this.state.data}/>
+                    </div>
                     </div>
             );
         } else {
@@ -89,11 +92,11 @@ class SearchForm extends React.Component {
                     <h1><center>Search</center></h1>
                     <h2><center>Search for Events between ID</center></h2>
                     <label>
-                    startshowid:<input name="startshowid" type="text" value={this.state.startshowid} onChange={this.handleChangeStartShowID} />
+                    <input name="startshowid" type="text" value={this.state.startshowid} onChange={this.handleChangeStartShowID} />
                     </label>
                     <p>and</p>
                     <label>
-                    endshowid:<input name="endshowid" value={this.state.endshowid} onChange={this.handleChangeEndShowID} />
+                    <input name="endshowid" type="text" value={this.state.endshowid} onChange={this.handleChangeEndShowID} />
                     </label>
 
                     <br></br>
