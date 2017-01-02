@@ -112,7 +112,6 @@ var Excel = React.createClass({
   render: function() {
     return (
       <div className="Excel">
-        {this._renderToolbar()}
         {this._renderTable()}
       </div>
     );
