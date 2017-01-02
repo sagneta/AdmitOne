@@ -9,12 +9,11 @@ import SearchForm from './components/SearchForm';
 ReactDOM.render(
   <h1>
         <LoginForm/>
+        <br/>
+        <br/>
+        <br/>
         <LogoutButton/>
-        <SearchForm/>
 
-        <br/>
-        <br/>
-        <br/>
   </h1>,
   document.getElementById('app')
 );

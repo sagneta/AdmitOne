@@ -17,7 +17,15 @@ class LogoutButton extends React.Component {
                         mode: 'cors',
                         cache: 'default' };
 
-        this.onClicked = this.onClicked.bind(this);        
+        this.onClicked = this.onClicked.bind(this);
+
+        this.theme = {
+            disabledStyle: { background: 'gray'},
+            overStyle: { background: 'blue'},
+            activeStyle: { background: 'red'},
+            pressedStyle: {background: 'magenta', fontWeight: 'bold'},
+            overPressedStyle: {background: 'purple', fontWeight: 'bold'}
+        };
     }
     
 
@@ -28,7 +36,8 @@ class LogoutButton extends React.Component {
             //data: mydata,
             success: function(response, textStatus, xhr) {
                 console.log("success");
-            },
+                window.location = "http://localhost:8080";
+            }.bind(this),
             error: function(xhr, textStatus, errorThrown) {
                 console.log("error");
             }
@@ -36,7 +45,7 @@ class LogoutButton extends React.Component {
     }
 
     render() {
-        return <ReactButton onClick={this.onClicked}>Logout</ReactButton>;
+        return <ReactButton theme={this.theme} onClick={this.onClicked}>Logout</ReactButton>;
     }
     
 }

@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import SearchForm from './SearchForm';
 import $ from 'jquery';
 
 class LoginForm extends React.Component {
@@ -9,7 +10,8 @@ class LoginForm extends React.Component {
         super(props);
         this.state = {
             username: 'Username',
-            password: 'Password'
+            password: 'Password',
+            displaySearch: false
         };
 
         this.handleChangeUsername = this.handleChangeUsername.bind(this);
@@ -40,7 +42,11 @@ class LoginForm extends React.Component {
             data: mydata,
             success: function(response, textStatus, xhr) {
                 console.log("success");
-            },
+                this.setState(
+                    {
+                        displaySearch: true
+                    });
+            }.bind(this),
             error: function(xhr, textStatus, errorThrown) {
                 console.log("error");
             }
@@ -48,6 +54,13 @@ class LoginForm extends React.Component {
     }
 
     render() {
+        if(this.state.displaySearch) {
+            return (
+                    <div>
+                    <SearchForm/>
+                    </div>
+            );
+        } else {
         return (
                 <div>
                 <form id="login-form" onSubmit={this.handleSubmit}>
@@ -64,6 +77,7 @@ class LoginForm extends React.Component {
                 </form>
                 </div>
         );
+        }
     }
 
 }
