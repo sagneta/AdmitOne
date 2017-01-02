@@ -70,7 +70,7 @@ public class AdministrationService {
     @Path("/ping")
     @Produces(MediaType.APPLICATION_JSON)
     public Response ping() throws Exception {
-        return Response.ok("Ok").build();    
+        return Response.ok(NetworkUtils.generateSuccessMap("Ping was successful.")).build();    
     }
 
     @GET

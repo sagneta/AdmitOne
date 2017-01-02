@@ -58,6 +58,8 @@ css.source {
 }
 
 combineCss {
+    outputs.upToDateWhen { false } // Always run if I invoke you.
+    
     source = css.source.dev.css.files
     dest = "./bundle.css"
 }
@@ -115,10 +117,11 @@ task cleanWar(type: Delete) {
   delete '../build/libs/ROOT.war'
   delete './bundle.css'
   delete './bundle.js'
- delete './js/build'
+  delete './js/build'
 }
 
 
 // Dependency chain
 clean.dependsOn(cleanWar)
-
+browserify.dependsOn(babel)
+babel.dependsOn(combineCss)

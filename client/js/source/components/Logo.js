@@ -6,4 +6,4 @@ class Logo extends React.Component {
   }
 }
 
-export default Logo
+export default Logo;

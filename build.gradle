@@ -195,11 +195,27 @@ tasks.withType(FindBugs) {
 
 task deploy (type: Copy) {
     outputs.upToDateWhen { false } // Always run if I invoke you.
+
+    def dependencies = ['client:assemble']
+    dependencies.each() {dependsOn "${it}"}
+
+
     from './build/libs'
     into System.env.JBOSS_HOME + '/standalone/deployments'
     include '*.war'
 }
 
+task deployClient (type: Copy) {
+    outputs.upToDateWhen { false } // Always run if I invoke you.
+
+    def dependencies = ['client:assemble']
+    dependencies.each() {dependsOn "${it}"}
+
+
+    from './build/libs'
+    into System.env.JBOSS_HOME + '/standalone/deployments'
+    include 'ROOT.war'
+}
 
 
 // Makes emacs projects easier to manage. We used to have all targets on makefiles.
