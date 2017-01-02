@@ -10,25 +10,23 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.picketlink.idm.IdentityManager;
-import org.picketlink.idm.model.basic.User;
-
 import com.admitone.persistence.entities.Order;
 import com.admitone.security.cdi.RolesAllowed;
 import com.admitone.security.interfaces.IIdentityManagementService;
-import com.admitone.utils.ErrorCodes;
 import com.admitone.utils.NetworkUtils;
 
 import lombok.Getter;
@@ -49,8 +47,8 @@ public class AdministrationService {
     @EJB
     private IIdentityManagementService identityService;
 
-    @Inject
-    private IdentityManager identityManager;
+    // @Inject
+    // private IdentityManager identityManager;
     
     @PostConstruct
     protected void startService()  {
@@ -73,32 +71,36 @@ public class AdministrationService {
         return Response.ok(NetworkUtils.generateSuccessMap("Ping was successful.")).build();    
     }
 
+    @POST
+    @Path("/search/form")
+    @RolesAllowed({SYSTEM_ADMINISTRATION_ROLE})
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response searchForm(
+                               @NotNull(message="startShowID must not be null") @FormParam("startshowid") final Integer startShowID,
+                               @NotNull(message="endShowID must not be null") @FormParam("endshowid") final Integer endShowID
+                               ) throws Exception {
+        return search(startShowID,  endShowID);
+    }
+    
     @GET
     @Path("/search")
     @RolesAllowed({SYSTEM_ADMINISTRATION_ROLE})
     @Produces(MediaType.APPLICATION_JSON)
-    public Response search(@NotNull(message="username must not be null.") @QueryParam("username") final String username,
-                           @NotNull(message="startShowID must not be null") @QueryParam("startShowID") final Integer startShowID,
-                           @NotNull(message="endShowID must not be null") @QueryParam("endShowID") final Integer endShowID
+    public Response search(
+                           @NotNull(message="startShowID must not be null") @QueryParam("startshowid") final Integer startShowID,
+                           @NotNull(message="endShowID must not be null") @QueryParam("endshowid") final Integer endShowID
                            ) throws Exception {
 
-        log.info("Search: username({}) startShowID({}) endShowID({})", username, startShowID, endShowID);
-
-        final User user = identityService.getUserByName(identityManager, username);
-
-        if(null == user) {
-            return NetworkUtils.errorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Could not find username: " + username, ErrorCodes.ADMITONE_HTTP_ERROR_CODES.UNEXPECTED_ERROR);
-        }
-
+        log.info("Search: startShowID({}) endShowID({})", startShowID, endShowID);
         
-        final List<Order> list = Order.findOrderRangedPerUser(getEntityManager(),
-                                                              user.getId(),
-                                                              Integer.min(startShowID, endShowID),
-                                                              Integer.max(startShowID, endShowID),
-                                                              iDEFAULT_LIMIT, iDEFAULT_OFFSET);
+        final List<Order> list = Order.findOrderRanged(getEntityManager(),
+                                                       Integer.min(startShowID, endShowID),
+                                                       Integer.max(startShowID, endShowID),
+                                                       iDEFAULT_LIMIT, iDEFAULT_OFFSET);
                                                               
 
-        list.forEach(o -> o.setUsername(username));
+        list.forEach(o -> o.setUsername("fill this in"));
         
         log.info("Completed");        
         return Response.ok(list).build();    

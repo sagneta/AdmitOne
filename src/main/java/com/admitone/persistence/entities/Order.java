@@ -42,6 +42,7 @@ import lombok.NoArgsConstructor;
             @NamedQuery(name="Order.findAllTicketsOwnedPerUser", query="SELECT SUM(tickets) FROM Order o WHERE userID = :userid AND canceled = FALSE AND orderType IN ('Purchase', 'Exchange')"),
             @NamedQuery(name="Order.findOrderHistoryPerUser",    query="SELECT o FROM Order o WHERE userID = :userid ORDER BY toShowID"),
             @NamedQuery(name="Order.findOrderRangedPerUser",     query="SELECT o FROM Order o WHERE userID = :userid AND canceled = FALSE AND orderType IN ('Purchase', 'Exchange') AND toShowID BETWEEN :min AND :max"),
+            @NamedQuery(name="Order.findOrderRanged",     query="SELECT o FROM Order o WHERE canceled = FALSE AND orderType IN ('Purchase', 'Exchange') AND toShowID BETWEEN :min AND :max"),            
             @NamedQuery(name="Order.findSpecificPurchaseOrExchange", query="SELECT o FROM Order o WHERE userID = :userid AND orderType IN ('Purchase', 'Exchange') AND canceled = FALSE AND toShowID = :toshowid AND tickets = :tickets"),
             @NamedQuery(name="Order.findAllTicketsOwnedPerUserAndShow", query="SELECT o FROM Order o WHERE userID = :userid AND orderType IN ('Purchase', 'Exchange') AND canceled = FALSE AND toShowID = :toshowid"),
             @NamedQuery(name="Order.findCountOfAllTicketsOwnedPerUserAndShow", query="SELECT SUM(o.tickets) FROM Order o WHERE userID = :userid AND orderType IN ('Purchase', 'Exchange') AND canceled = FALSE AND toShowID = :toshowid"),
@@ -144,6 +145,19 @@ public class Order {
         final TypedQuery<Order> query = EM.createNamedQuery("Order.findOrderRangedPerUser", Order.class);
 
         query.setParameter("userid", userID);
+        query.setParameter("min", minShowID);
+        query.setParameter("max", maxShowID);
+        query.setFirstResult(start);
+        query.setMaxResults(limit);
+
+        return query.getResultList();
+    }
+
+    public static List<Order> findOrderRanged(final EntityManager EM,
+                                              final int minShowID, final int maxShowID,
+                                              final int limit, final int start) {
+        final TypedQuery<Order> query = EM.createNamedQuery("Order.findOrderRanged", Order.class);
+
         query.setParameter("min", minShowID);
         query.setParameter("max", maxShowID);
         query.setFirstResult(start);

@@ -92,7 +92,7 @@ public class AuthenticationService {
     @POST
     @Path("/logout")
     public Response logout() throws Exception {
-
+        log.info("logout invoked");
         if (this.identity.isLoggedIn()) {
             log.info("Logging out of picketlink.");
             identity.logout();
