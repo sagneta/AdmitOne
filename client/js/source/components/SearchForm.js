@@ -84,6 +84,7 @@ class SearchForm extends React.Component {
             );
         } else {
             return (
+                    <div>
                     <form id="search-form" onSubmit={this.handleSubmit} >
                     <h1><center>Search</center></h1>
                     <h2><center>Search for Events between ID</center></h2>
@@ -98,6 +99,7 @@ class SearchForm extends React.Component {
                     <br></br>
                     <input type="submit" value="Search" />
                     </form>
+                    </div>
             );
         }
     }
