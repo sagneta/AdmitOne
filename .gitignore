@@ -27,3 +27,4 @@ TAGS~
 **/*.*~
 **/.#*
 bundle.*
+node_modules
