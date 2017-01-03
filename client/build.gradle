@@ -50,7 +50,7 @@ war {
 css.source {
     dev {
         css {
-            srcDir "./css"
+            srcDir "css"
             include "**/*.css"
             exclude "*.min.css"
         }
@@ -58,10 +58,8 @@ css.source {
 }
 
 combineCss {
-    outputs.upToDateWhen { false } // Always run if I invoke you.
-    
     source = css.source.dev.css.files
-    dest = "./bundle.css"
+    dest = "./client/bundle.css"
 }
 
 
