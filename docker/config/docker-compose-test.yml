@@ -1,0 +1,27 @@
+# For more config options https://docs.docker.com/compose/compose-file/
+# Should upgrade to version 2 and merge with the deploy one, but Travis doesnt like version 2
+#For more config options https://docs.docker.com/compose/compose-file/
+version: '2'
+services:
+  db:
+    image: bjond/postgresql:9.5.3
+
+  app:
+    image: bjond/wildfly:9.0.2
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../../:/opt/jboss/code:rw
+      - ../self_signed_keystore/:/opt/jboss/wildfly/standalone/configuration/keystore:rw
+    links:
+      - db
+    environment:
+      - OPENSHIFT_POSTGRESQL_DB_NAME=bjondhealth
+      - OPENSHIFT_POSTGRESQL_DB_HOST=db
+      - OPENSHIFT_POSTGRESQL_DB_USERNAME=bjondhealth
+      - OPENSHIFT_POSTGRESQL_DB_PASSWORD=bjondhealth
+      - OPENSHIFT_POSTGRESQL_DB_PORT=5432
+      - OPENSHIFT_APP_NAME=bjondhealth
+      - HIPAA_SPACE_TOKEN='AAE5FB3C82D640D89194B87EABDEF66B13C16DF8D07F4699BAE5642EA8E65798'
+      - LANG=en_US.UTF-8
+    command: /bin/sh /opt/jboss/code/docker/scripts/test.sh

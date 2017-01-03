@@ -1,0 +1,21 @@
+#For more config options https://docs.docker.com/compose/compose-file/
+version: '2'
+services:
+  db:
+    image: bjond/postgresql:9.5.3
+  app:
+    image: bjond/openempi:3.1.0
+    ports:
+      - ${PORT}:8080
+    depends_on:
+      - db
+    links:
+      - db
+    environment:
+      - OPENEMPI_DB_NAME=openempi
+      - OPENEMPI_DB_HOST=db
+      - OPENEMPI_DB_USERNAME=openempi
+      - OPENEMPI_DB_PASSWORD=openempi
+      - OPENEMPI_DB_PORT=5432
+      - LANG=en_US.UTF-8
+    entrypoint: ./wait-for-it.sh db catalina.sh run

@@ -1,0 +1,5 @@
+# xml2 extension
+comment = 'Natural Sort Order'
+default_version = '1.0.1'
+module_pathname = '$libdir/pg_natural_sort_order'
+relocatable = false

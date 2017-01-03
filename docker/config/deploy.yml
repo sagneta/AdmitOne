@@ -1,0 +1,38 @@
+#For more config options https://docs.docker.com/compose/compose-file/
+version: '2'
+services:
+  datomic:
+    image: bjond/datomic:0.9.5394
+    ports:
+      - 4334:4334
+    volumes:
+      - "${BIN_DIR}/../images/datomic/:/opt/datomic/transactor/transactor_config:rw"
+    command: /opt/datomic/transactor/bin/transactor -Xmx1g /opt/datomic/transactor/transactor_config/dev.properties
+  db:
+    image: bjond/postgresql:9.5.3
+  app:
+    image: bjond/wildfly:9.0.2
+    ports:
+      - ${PORT}:8080
+    depends_on:
+      - db
+      - datomic
+    volumes:
+      - "${BIN_DIR}/../../:/opt/jboss/code:rw"
+      - "${BIN_DIR}/../self_signed_keystore/:/opt/jboss/wildfly/standalone/configuration/keystore:rw"
+    links:
+      - db
+      - datomic
+    environment:
+      - OPENSHIFT_POSTGRESQL_DB_NAME=bjondhealth
+      - OPENSHIFT_POSTGRESQL_DB_HOST=db
+      - OPENSHIFT_POSTGRESQL_DB_USERNAME=bjondhealth
+      - OPENSHIFT_POSTGRESQL_DB_PASSWORD=bjondhealth
+      - OPENSHIFT_POSTGRESQL_DB_PORT=5432
+      - PGPASSWORD=bjondhealth
+      - OPENSHIFT_APP_NAME=bjondhealth
+      - HIPAA_SPACE_TOKEN='AAE5FB3C82D640D89194B87EABDEF66B13C16DF8D07F4699BAE5642EA8E65798'
+      - BJOND_DATOMIC_URI=datomic:dev://datomic:4334/bjond
+      - LANG=en_US.UTF-8
+      - DB_DUMP=${DB_DUMP}
+    command: /bin/sh /opt/jboss/code/docker/scripts/deploy.sh
