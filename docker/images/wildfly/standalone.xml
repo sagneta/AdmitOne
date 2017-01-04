@@ -230,57 +230,6 @@
                         <password>sa</password>
                     </security>
                 </datasource>
-                <!-- For bjond-axis-adapter -->
-                <datasource jta="true" jndi-name="java:jboss/datasources/AdapterDS" pool-name="AdapterDS" enabled="true" use-java-context="true" use-ccm="true">
-                    <connection-url>jdbc:postgresql://${env.ADAPTER_POSTGRESQL_DB_HOST}:${env.ADAPTER_POSTGRESQL_DB_PORT}/${env.ADAPTER_APP_NAME}</connection-url>
-                    <driver>postgresql</driver>
-                    <new-connection-sql>select 1</new-connection-sql>
-                    <pool>
-                        <min-pool-size>5</min-pool-size>
-                        <max-pool-size>10</max-pool-size>
-                        <prefill>true</prefill>
-                        <flush-strategy>IdleConnections</flush-strategy>
-                    </pool>
-                    <security>
-                        <user-name>${env.ADAPTER_POSTGRESQL_DB_USERNAME}</user-name>
-                        <password>${env.ADAPTER_POSTGRESQL_DB_PASSWORD}</password>
-                    </security>
-                    <validation>
-                        <check-valid-connection-sql>SELECT 1</check-valid-connection-sql>
-                        <background-validation>true</background-validation>
-                        <validate-on-match>true</validate-on-match>
-                    </validation>
-                    <statement>
-                        <track-statements>true</track-statements>  <!-- Warn when statements and result sets not closed -->
-                        <prepared-statement-cache-size>100</prepared-statement-cache-size>
-                        <share-prepared-statements>true</share-prepared-statements>
-                    </statement>
-                </datasource>
-                <datasource jta="false" jndi-name="java:jboss/datasources/AdapterDSNoJTA" pool-name="AdapterDSNoJTA" enabled="true" use-java-context="true" use-ccm="true">
-                    <connection-url>jdbc:postgresql://${env.ADAPTER_POSTGRESQL_DB_HOST}:${env.ADAPTER_POSTGRESQL_DB_PORT}/${env.ADAPTER_APP_NAME}</connection-url>
-                    <driver>postgresql</driver>
-                    <new-connection-sql>select 1</new-connection-sql>
-                    <pool>
-                        <min-pool-size>5</min-pool-size>
-                        <max-pool-size>10</max-pool-size>
-                        <prefill>true</prefill>
-                        <flush-strategy>IdleConnections</flush-strategy>
-                    </pool>
-                    <security>
-                        <user-name>${env.ADAPTER_POSTGRESQL_DB_USERNAME}</user-name>
-                        <password>${env.ADAPTER_POSTGRESQL_DB_PASSWORD}</password>
-                    </security>
-                    <validation>
-                        <check-valid-connection-sql>SELECT 1</check-valid-connection-sql>
-                        <background-validation>true</background-validation>
-                        <validate-on-match>true</validate-on-match>
-                    </validation>
-                    <statement>
-                        <track-statements>true</track-statements>  <!-- Warn when statements and result sets not closed -->
-                        <prepared-statement-cache-size>100</prepared-statement-cache-size>
-                        <share-prepared-statements>true</share-prepared-statements>
-                    </statement>
-                </datasource>
                 <!-- For bjond-health -->
                 <!--datasource jta="true" jndi-name="java:jboss/datasources/PostgreSQLDS" pool-name="PostgreSQLDS" enabled="true" use-java-context="true" spy="true" use-ccm="true"> Use for JDBC debug -->
                 <datasource jta="true" jndi-name="java:jboss/datasources/PostgreSQLDS" pool-name="PostgreSQLDS" enabled="true" use-java-context="true" use-ccm="true">
@@ -330,30 +279,6 @@
                     </validation>
                     <statement>
                         <track-statements>true</track-statements>  <!-- Warn when statements and result sets not closed -->
-                        <prepared-statement-cache-size>100</prepared-statement-cache-size>
-                        <share-prepared-statements>true</share-prepared-statements>
-                    </statement>
-                </datasource>
-                <!-- For bjond-twilio-adapter -->
-                <datasource jta="true" jndi-name="java:jboss/datasources/TwilioAdapterDS" pool-name="TwilioAdapterDS" enabled="true" use-java-context="true" use-ccm="true">
-                    <connection-url>jdbc:postgresql://${env.TWILIO_ADAPTER_POSTGRESQL_DB_HOST}:${env.TWILIO_ADAPTER_POSTGRESQL_DB_PORT}/${env.TWILIO_ADAPTER_APP_NAME}</connection-url>
-                    <driver>postgresql</driver>
-                    <new-connection-sql>select 1</new-connection-sql>
-                    <pool>
-                        <min-pool-size>5</min-pool-size>
-                        <max-pool-size>10</max-pool-size>
-                        <prefill>true</prefill>
-                        <flush-strategy>IdleConnections</flush-strategy>
-                    </pool>
-                    <security>
-                        <user-name>${env.TWILIO_ADAPTER_POSTGRESQL_DB_USERNAME}</user-name>
-                        <password>${env.TWILIO_ADAPTER_POSTGRESQL_DB_PASSWORD}</password>
-                    </security>
-                    <validation>
-                        <check-valid-connection-sql>SELECT 1</check-valid-connection-sql>
-                        <background-validation>true</background-validation>
-                    </validation>
-                    <statement>
                         <prepared-statement-cache-size>100</prepared-statement-cache-size>
                         <share-prepared-statements>true</share-prepared-statements>
                     </statement>

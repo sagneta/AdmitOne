@@ -5,7 +5,8 @@
 
   <persistence-unit name="admitone" transaction-type="JTA">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
-    <jta-data-source>java:jboss/datasources/AdmitOneDS</jta-data-source>
+    <!-- <jta-data-source>java:jboss/datasources/AdmitOneDS</jta-data-source> -->
+    <jta-data-source>java:jboss/datasources/PostgreSQLDS</jta-data-source>
 
     <!-- IdentityManager -->
     <class>org.picketlink.idm.jpa.model.sample.simple.AttributedTypeEntity</class>

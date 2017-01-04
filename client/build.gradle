@@ -89,7 +89,7 @@ task babel(type: BabelTask) {
 
 class BabelTask extends PortableExecTask {
   public BabelTask() {
-    super("babel", "babel")
+    super("babel", "./node_modules/babel-cli/bin/babel.js")
   }
 }
 
@@ -104,7 +104,7 @@ task browserify(type: BrowserifyTask) {
 
 class BrowserifyTask extends PortableExecTask {
   public BrowserifyTask() {
-    super("browserify", "browserify")
+    super("browserify", "./node_modules/browserify/bin/cmd.js")
   }
 }
 
