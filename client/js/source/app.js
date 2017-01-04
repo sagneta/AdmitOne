@@ -7,13 +7,14 @@ import LogoutButton from './components/LogoutButton';
 import SearchForm from './components/SearchForm';
 
 ReactDOM.render(
-  <h1>
+        <h1>
+        <div>
         <LoginForm/>
         <br/>
         <br/>
         <br/>
         <LogoutButton/>
-
-  </h1>,
+        </div>
+        </h1>,
   document.getElementById('app')
 );

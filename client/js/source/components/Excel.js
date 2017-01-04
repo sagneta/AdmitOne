@@ -155,14 +155,14 @@ var Excel = React.createClass({
     
     _renderTable: function() {
         return (
-                <table>
+                <table id="exceltable" >
                 <thead onClick={this._sort}>
                 <tr>{
                     this.props.headers.map(function(title, idx) {
                         if (this.state.sortby === idx) {
                             title += this.state.descending ? ' \u2191' : ' \u2193';
                         }
-                        return <th key={idx}>{title}</th>;
+                        return <th id="excel-th" key={idx}>{title}</th>;
                     }, this)
                 }</tr>
                 </thead>
@@ -181,7 +181,7 @@ var Excel = React.createClass({
                                             </form>
                                     );
                                 }
-                                return <td key={idx} data-row={rowidx}>{content}</td>;
+                                return <td id="excel-td" key={idx} data-row={rowidx}>{content}</td>;
                             }, this)}
                     </tr>
                 );

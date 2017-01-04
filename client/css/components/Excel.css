@@ -1,0 +1,26 @@
+/**********************************************************************/
+/*                                Tables                              */
+/**********************************************************************/
+
+#exceltable, #excel-th, #excel-td {
+   border: 1px solid black;
+}
+
+#exceltable {
+    display: table;
+    border-spacing: 0.5rem;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#excel-th {
+    height: 50px;
+    background-color: #4CAF50;
+    color: white;
+}
+
+#excel-th, #excel-td {
+    padding: 15px;
+    text-align: left;
+}
+

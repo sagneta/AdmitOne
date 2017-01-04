@@ -77,7 +77,7 @@ class SearchForm extends React.Component {
 
         if(this.state.displayExcel) {
             return (
-                    <div>
+                    <div id="exceltable">
                     <ReactButton onClick={this.onClicked}>Search Again</ReactButton>
                     <br/>
                     <div>
@@ -87,20 +87,20 @@ class SearchForm extends React.Component {
             );
         } else {
             return (
-                    <div>
+                    <div id="searchform">
                     <form id="search-form" onSubmit={this.handleSubmit} >
                     <h1><center>Search</center></h1>
                     <h2><center>Search for Events between ID</center></h2>
                     <label>
-                    <input name="startshowid" type="text" value={this.state.startshowid} onChange={this.handleChangeStartShowID} />
+                    <input id="searchform-startshowid" name="startshowid" type="text" value={this.state.startshowid} onChange={this.handleChangeStartShowID} />
                     </label>
                     <p>and</p>
                     <label>
-                    <input name="endshowid" type="text" value={this.state.endshowid} onChange={this.handleChangeEndShowID} />
+                    <input id="searchform-endshowid" name="endshowid" type="text" value={this.state.endshowid} onChange={this.handleChangeEndShowID} />
                     </label>
 
                     <br></br>
-                    <input type="submit" value="Search" />
+                    <input id="searchbutton" type="submit" value="Search" />
                     </form>
                     </div>
             );
