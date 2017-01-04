@@ -14,6 +14,7 @@ if [ -d $CODEDIR ]; then
   createdb -U bjondhealth -h db admitone
 
   # Build, migrate and deploy app
+  cd client
   npm install --save-dev browserfy
   npm install --save-dev babel-cli
   npm install --save-dev react
@@ -22,11 +23,16 @@ if [ -d $CODEDIR ]; then
   npm install --save-dev babel-preset-es2015
   npm install --save-dev react-button 
   npm install --save-dev jquery
+  cd ..
   
   gradle flywayMigrate
-  gradle
+  gradle 
+  gradle 
+  gradle test 
   gradle deploy
+
   # Start wildfly
+  #cp ./docker/images/wildfly/standalone.xml /opt/jboss/wildfly/standalone/configuration/
   $JBOSS_HOME/bin/standalone.sh -b 0.0.0.0
 else
   echo "code directory $CODEDIR not found"
