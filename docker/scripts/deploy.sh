@@ -11,24 +11,27 @@ if [ -d $CODEDIR ]; then
   # cd to the code directory mounted from host
   cd $CODEDIR
   # Restore custom DB
-  dropdb -U bjondhealth -h db bjondhealth
-  createdb -U bjondhealth -h db bjondhealth
-  if [ -f $DB_DUMP ]; then
-    pg_restore -Fc --clean -U bjondhealth -h db -d bjondhealth $DB_DUMP || echo "Dont exit if restore has errors, it always does" 
-  fi
+  createdb -U bjondhealth -h db admitone
+
   # Build, migrate and deploy app
-  npm install --save-dev browserfy
+  cd client
+  npm install --save-dev browserify
   npm install --save-dev babel-cli
   npm install --save-dev react
   npm install --save-dev react-dom
   npm install --save-dev babel-preset-react
   npm install --save-dev babel-preset-es2015
   npm install --save-dev react-button 
+  npm install --save-dev jquery
+  cd ..
   
-  gradle flywayclean flywayMigrate
-  gradle
-  gradle deployroot
+  gradle flywayMigrate
+  gradle 
+  gradle test 
+  gradle deploy
+
   # Start wildfly
+  #cp ./docker/images/wildfly/standalone.xml /opt/jboss/wildfly/standalone/configuration/
   $JBOSS_HOME/bin/standalone.sh -b 0.0.0.0
 else
   echo "code directory $CODEDIR not found"

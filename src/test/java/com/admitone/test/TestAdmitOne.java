@@ -26,8 +26,10 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.picketlink.Identity;
 
 import com.admitone.main.AdministrationService;
@@ -49,6 +51,7 @@ import lombok.extern.slf4j.Slf4j;
  *
  */
 @RunWith(Arquillian.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
 public class TestAdmitOne {
     public static final String ROOT_WAR_DEPLOYMENT_LOCATION = "./build/libs/admitone.war";
@@ -93,7 +96,7 @@ public class TestAdmitOne {
         authenticationService.logout();
     }
 
-    
+
     @Test
     public void sanityCheck() throws Exception {
         Assert.assertTrue("I ran ok!", true);
@@ -498,11 +501,9 @@ public class TestAdmitOne {
     }
 
 
-    // Convenient method of constructing lots of test data.
-    // Simply uncomment the test annotation and comment all others and run the system integration suite.
-
-    //@Test
-    public void constuctTestDataSet() throws Exception {
+    // Just created canned data as the last test.
+    @Test
+    public void zzzz_constuctTestDataSet() throws Exception {
         // Logged in as Admin at this moment. Create some admin purchases.
         final Random r = new Random();
 

@@ -15,7 +15,7 @@ services:
     links:
       - db
     environment:
-      - OPENSHIFT_POSTGRESQL_DB_NAME=bjondhealth
+      - OPENSHIFT_POSTGRESQL_DB_NAME=admitone
       - OPENSHIFT_POSTGRESQL_DB_HOST=db
       - OPENSHIFT_POSTGRESQL_DB_USERNAME=bjondhealth
       - OPENSHIFT_POSTGRESQL_DB_PASSWORD=bjondhealth

@@ -39,17 +39,13 @@ ENV DB_PASS=bjondhealth
 ENV DB_NAME=bjondhealth
 RUN ./create_postgres_user.sh
 
-# Create openempi DB and Role
-ENV DB_USER=openempi
-ENV DB_PASS=openempi
-ENV DB_NAME=openempi
+# Create admitone DB and Role
+ENV DB_USER=admitone
+ENV DB_PASS=admitone
+ENV DB_NAME=admitone
 RUN ./create_postgres_user.sh
 
-# Copy openempi DB init scripts
-COPY ./openempi_init_scripts ./openempi_init_scripts
-RUN chmod +x -R ./openempi_init_scripts
-COPY ./openempi_db_init.sh ./openempi_db_init.sh
-RUN chmod +x ./openempi_db_init.sh
+# Copy init scripts
 COPY ./postgres.sh /postgres.sh
 RUN chmod +x ./postgres.sh
 
