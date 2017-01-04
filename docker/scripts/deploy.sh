@@ -15,7 +15,7 @@ if [ -d $CODEDIR ]; then
 
   # Build, migrate and deploy app
   cd client
-  npm install --save-dev browserfy
+  npm install --save-dev browserify
   npm install --save-dev babel-cli
   npm install --save-dev react
   npm install --save-dev react-dom
