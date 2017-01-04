@@ -26,10 +26,9 @@ if [ -d $CODEDIR ]; then
   cd ..
   
   gradle flywayMigrate
-  gradle 
-  gradle 
-  gradle test 
-  gradle deploy
+  gradle test deploy
+#  gradle test 
+#  gradle deploy
 
   # Start wildfly
   #cp ./docker/images/wildfly/standalone.xml /opt/jboss/wildfly/standalone/configuration/
