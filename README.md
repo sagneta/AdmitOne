@@ -18,7 +18,7 @@ Requires basically are:
 Note that I added a hokey login button because I think every app should have one. It looks
 stupid but it works fine.
 
-## Two Way to Install and Run
+## Two Ways to Install and Run
 
 There are two ways to install the project. _The Cool Way_ which requires 
 docker and _the Common Method_.
