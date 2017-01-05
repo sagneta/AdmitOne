@@ -8,7 +8,7 @@ javascript. My first impressions of ReactJS are very positive.
 
 The back-end is a J2EE 7 Wildfly 9 application using PicketLink as Security Manager and JPA 2.1
 
-Requires basically are:
+Requirements basically are:
 
 * nodejs and npm
 * JDK-8
@@ -28,7 +28,7 @@ docker and _the Common Method_.
 
 This method employs a tgz file of a Wildfly installation with the product deployed along
 with JDK-8 for Linux systems. It also contains a gradle installation for further builds.
-You will _require_ an installation of postgresql and it's location, if not localhost, will
+It will _require_ an installation of postgresql and it's location, if not localhost, will
 require a change to a single environment variable. Otherwise this is rather simple.
 
 The package.tgz file is located on GoogleDrive as it is large: 
